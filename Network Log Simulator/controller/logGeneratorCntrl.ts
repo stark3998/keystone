@@ -22,10 +22,6 @@ class LogGeneratorCntrl {
     public static setRouterMiddleWare(router: express.Router): void {
         router.route('/logs')
             .get(Validator.validate, LogGeneratorCntrl.getWifiLogs);
-
-        // router.route('/states/districts')
-        //     .get(Validator.validate, LocationCntrlr.getDistricts);
-
     }
 
     /**
@@ -36,15 +32,8 @@ class LogGeneratorCntrl {
     * @returns void
     */
     public static getWifiLogs(req: express.Request, res: express.Response): void {
-            console.log('getWifiLogs -', req.url);
-
-            // LogGenerator.generateWifiAccessPointLogs().then(resp => {
-            //     res.status(resp.statusCode).send(resp.log);
-            // })
-            // .catch(resp => {
-            //     res.status(resp.statusCode).send(resp.error);
-            // });
-
+        console.log('getWifiLogs -', req.url);
+        
         res.writeHead(200, {
             'Content-Type': 'text/plain',
             'Transfer-Encoding': 'chunked'

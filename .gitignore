@@ -166,6 +166,9 @@ node_modules/
 dist/
 build/
 out/
+**/package-lock.json/
+package-lock.json/
+
 
 # Ignore node_modules directory in all subdirectories
 **/node_modules/

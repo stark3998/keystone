@@ -8,8 +8,7 @@ import path from 'path';
 import { InputValidationError } from 'openapi-validator-middleware';
 import { configuration } from './support/appConfig';
 
-import { LogGenerator } from './utilities/logGenerator';
-import { logGeneratorCntrl } from './controller/logGeneratorCntrl';
+import { exampleCntrl } from './controller/ExampleCntrl';
 
 
 
@@ -39,7 +38,6 @@ export class Server {
   public async start(): Promise<void> {
     const server: http.Server = this.apiApp.listen(this.port, () => {
       console.log(`------------API Web Server Starting on port ${this.port} -------------`);
-      LogGenerator.generateLogInIntervals();
     });
   }
 
@@ -67,7 +65,7 @@ export class Server {
   * @returns void
   */
   public setRouterMiddleWare(): void {
-    this.apiApp.use('/v1/logs', logGeneratorCntrl.router);
+    this.apiApp.use('/v1/example', exampleCntrl.router);
     this.apiApp.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
       if (err instanceof InputValidationError) {
         return res.status(400).json({ more_info: JSON.stringify(err.errors) });

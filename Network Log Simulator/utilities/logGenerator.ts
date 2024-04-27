@@ -78,10 +78,3 @@ export class LogGenerator {
 }
 
 export let logGenerator = new LogGenerator()
-
-
-// // Example: Generate 5 WiFi access point log entries
-// const numLogs = 500;
-// const generatedLogs = generateWifiAccessPointLogs(numLogs);
-// const logs = JSON.stringify(generatedLogs, null, 4);
-// console.log(logs);
