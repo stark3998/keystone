@@ -1,0 +1,3 @@
+[submodule "era-frontend"]
+	path = era-frontend
+	url = https://github.com/SloppyProgrammer/era-frontend
