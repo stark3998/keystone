@@ -177,3 +177,4 @@ package-lock.json/
 **/dist/
 Gunshot API/models/.DS_Store
 Gunshot API/background.wav
+Gunshot API/background-test.wav
