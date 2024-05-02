@@ -175,3 +175,4 @@ package-lock.json/
 
 # Ignore dist directory in all subdirectories
 **/dist/
+Gunshot API/models/.DS_Store
