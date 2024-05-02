@@ -15,7 +15,7 @@ import os
 
 import numpy as np
 from include import helpers
-from keras.models import load_model
+from keras.models import load_model # type: ignore
 
 model_file = "aug-train-nb3.keras"
 models_path = os.path.abspath("./Gunshot API/models")

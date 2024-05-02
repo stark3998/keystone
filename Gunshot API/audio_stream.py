@@ -1,12 +1,10 @@
 import os
-import pickle
 import wave
 
-import librosa
 import numpy as np
 import pyaudio
 from include import helpers
-from keras.models import load_model
+from keras.models import load_model  # type: ignore
 
 model_file = "aug-train-nb3.keras"
 models_path = os.path.abspath("./models")
@@ -76,7 +74,10 @@ def detect():
         stream.close()  # close the stream
         p.terminate()
         # now open a wave file with a specified name to store the audio
-        audio_filename="/Users/jaycrappe/Documents/GitHub/Keystone/Gunshot API/" + WAVE_OUTPUT_FILENAME
+        audio_filename = (
+            "/Users/jaycrappe/Documents/GitHub/Keystone/Gunshot API/"
+            + WAVE_OUTPUT_FILENAME
+        )
         wf = wave.open(audio_filename, "wb")
         wf.setnchannels(CHANNELS)
         wf.setsampwidth(p.get_sample_size(FORMAT))
@@ -87,5 +88,5 @@ def detect():
         predict_audio(audio_filename)
 
 
-if __name__=='__main__':
+if __name__ == "__main__":
     detect()
