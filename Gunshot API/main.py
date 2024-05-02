@@ -20,12 +20,8 @@ from include import helpers
 from keras.models import load_model  # type: ignore
 
 model_file = "aug-train-nb3.keras"
-models_path = os.path.abspath(
-    "/Users/jaycrappe/Documents/GitHub/Keystone/Gunshot API/models"
-)
+models_path = os.path.abspath("./models")
 model_path = os.path.join(models_path, model_file)
-
-test_file = "/Users/jaycrappe/Documents/GitHub/urban-audio-classifier/UrbanSound8K/audio/fold2/76089-6-0-0.wav"
 
 model = load_model(model_path)
 
@@ -42,9 +38,11 @@ labels = [
     "Street Music",
 ]
 
+
 @app.get("/", include_in_schema=False)
 def redirect_to_docs():
-    return RedirectResponse(url='/docs/')
+    return RedirectResponse(url="/docs/")
+
 
 @app.get("/stream_response/")
 async def get_result():
@@ -89,7 +87,7 @@ async def get_uploaded_result(audio_file: UploadFile = File(...)):
         )
     WAVE_OUTPUT_FILENAME = "background-test.wav"
     audio_filename = (
-        "/Users/jaycrappe/Documents/GitHub/Keystone/Gunshot API/" + WAVE_OUTPUT_FILENAME
+        "./" + WAVE_OUTPUT_FILENAME
     )
     CHUNK = 1024
     with open(audio_filename, "wb") as buffer:

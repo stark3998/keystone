@@ -76,7 +76,7 @@ def detect(ret = False):
         p.terminate()
         # now open a wave file with a specified name to store the audio
         audio_filename = (
-            "/Users/jaycrappe/Documents/GitHub/Keystone/Gunshot API/"
+            "./"
             + WAVE_OUTPUT_FILENAME
         )
         wf = wave.open(audio_filename, "wb")
