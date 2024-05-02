@@ -5,6 +5,7 @@ import numpy as np
 import pyaudio
 from include import helpers
 from keras.models import load_model  # type: ignore
+import time
 
 model_file = "aug-train-nb3.keras"
 models_path = os.path.abspath("./models")
@@ -48,7 +49,7 @@ def predict_audio(test_file):
 
 
 # audio recording and gunshot detection
-def detect():
+def detect(ret = False):
     CHUNK = 1024  # size of each data frame in which audio will be recorded
     FORMAT = pyaudio.paInt16
     CHANNELS = 1  # recording channel
@@ -85,7 +86,10 @@ def detect():
         wf.writeframes(b"".join(frames))
         wf.close()  # storing of audio is done till here
         print(f"Saved Audio File : {WAVE_OUTPUT_FILENAME}")
-        predict_audio(audio_filename)
+        if ret:
+            yield str.encode('{}\n'.format(predict_audio(audio_filename)))
+        else:
+            predict_audio(audio_filename)
 
 
 if __name__ == "__main__":
