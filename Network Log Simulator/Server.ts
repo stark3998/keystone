@@ -39,7 +39,7 @@ export class Server {
   public async start(): Promise<void> {
     const server: http.Server = this.apiApp.listen(this.port, () => {
       console.log(`------------API Web Server Starting on port ${this.port} -------------`);
-      LogGenerator.generateLogInIntervals();
+      // LogGenerator.generateLogInIntervals();
     });
   }
 

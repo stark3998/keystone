@@ -1,0 +1,69 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animated Path</title>
+    <style>
+        canvas {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas" width="400" height="400"></canvas>
+    <script src="script.js"></script>
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maze Path Animation</title>
+<style>
+    /* CSS to style the maze cells */
+    body{
+        background-color: black;
+    }
+    .maze {
+        display: grid;
+        grid-template-columns: repeat(var(--maze-columns), 50px);
+        grid-template-rows: repeat(var(--maze-rows), 50px);
+    }
+    .cell {
+        width: 50px;
+        height: 50px;
+        background-color: rgb(30, 30, 30);
+        border: 1px solid grey;
+        color: white;
+        box-sizing: border-box;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    /* CSS to style the marker */
+    #marker {
+        width: 20px;
+        height: 20px;
+        background-color: red;
+        /* background-color: rgba(0, 0, 0, 0); */
+        /* border-color: pink;
+        border-width: 10px; */
+        position: absolute;
+        transition: all 0.5s ease-in-out;
+        border-radius: 50%;
+        z-index: 1;
+    }
+</style>
+</head>
+<body>
+<div class="maze" id="maze">
+    <!-- Maze cells will be dynamically generated here -->
+</div>
+<div id="marker"></div>
+    <canvas id="canvas" width="400" height="400"></canvas>
+    <script src="script.js"></script>
+</body>
+</html>
