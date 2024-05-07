@@ -1,8 +1,8 @@
 
-interface IConfiguration{
-    webport: number;
+    interface IConfiguration {
+        webport: number;
     }
     
     export let configuration: IConfiguration = {
-        'webport': 5001
+        'webport': 4000
     };

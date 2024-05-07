@@ -25,7 +25,7 @@ export interface log {
     'Avg. data rate': number,
     'Connected / Disconnected Since': String,
     'First Detected At': String,
-    'Location': String,
+    'Location': {'x': Number, 'y': Number},
     'Sticky': boolean,
     'Tag': String,
 }

@@ -50,7 +50,7 @@ export class LogGenerator {
             'Avg. data rate': Math.floor(Math.random() * 1000) + 1,
             'Connected / Disconnected Since': faker.date.recent().toISOString(),
             'First Detected At': faker.date.past().toISOString(),
-            'Location': faker.location.city(),
+            'Location': {"x": Math.floor(Math.random() * 10) + 1, "y": Math.floor(Math.random() * 10) + 1},
             'Sticky': Math.random() < 0.5,
             'Tag': faker.word.words(5),
           };
