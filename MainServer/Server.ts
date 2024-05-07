@@ -9,7 +9,7 @@ import { InputValidationError } from 'openapi-validator-middleware';
 import { configuration } from './support/appConfig';
 
 import { exampleCntrl } from './controller/ExampleCntrl';
-
+import { floorplanCntrl } from './controller/FloorplanCntrl';
 
 
 
@@ -66,6 +66,7 @@ export class Server {
   */
   public setRouterMiddleWare(): void {
     this.apiApp.use('/v1/example', exampleCntrl.router);
+    this.apiApp.use('/v1/floorplan', floorplanCntrl.router);
     this.apiApp.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
       if (err instanceof InputValidationError) {
         return res.status(400).json({ more_info: JSON.stringify(err.errors) });
