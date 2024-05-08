@@ -96,30 +96,47 @@ class FloorplanCntrl {
 
     public static savePlan(req: express.Request, res: express.Response): void {
         console.log('savePlan -', req.url);
-
+    
         const { name, description, data, thumbnail, width, height } = req.body;
-
+    
         // Connect to the SQLite database
         const db = getDatabaseInstance();
-
-        console.log('db - ', db);
-
-        // Save plan to database
-        const insertQuery = `INSERT INTO plans (name, description, data, thumbnail, width, height) VALUES (?, ?, ?, ?, ?, ?)`;
-
-        // Convert data object to JSON string
-        const serializedData = JSON.stringify(data);
-
-        db.run(insertQuery, [name, description, serializedData, thumbnail, width, height], function (err) {
+    
+        // Check if the plan with the given name already exists
+        const selectQuery = `SELECT * FROM plans WHERE name = ?`;
+        db.get(selectQuery, [name], function (err, row: PlanRow) {
             if (err) {
-                console.log(err);
-                res.status(500).json({ message: "Error saving plan" });
+                res.status(500).json({ message: "Error checking existing plan" });
             } else {
-                console.log('Plan saved successfully');
-                res.status(200).json({ message: "Plan saved successfully" });
+                if (row) {
+                    // Plan already exists, update its information
+                    const updateQuery = `UPDATE plans SET description = ?, data = ?, thumbnail = ?, width = ?, height = ? WHERE name = ?`;
+                    const serializedData = JSON.stringify(data);
+                    db.run(updateQuery, [description, serializedData, thumbnail, width, height, name], function (err) {
+                        if (err) {
+                            res.status(500).json({ message: "Error updating plan" });
+                        } else {
+                            console.log('Plan updated successfully');
+                            res.status(200).json({ message: "Plan updated successfully" });
+                        }
+                    });
+                } else {
+                    // Plan doesn't exist, insert new plan
+                    const insertQuery = `INSERT INTO plans (name, description, data, thumbnail, width, height) VALUES (?, ?, ?, ?, ?, ?)`;
+                    const serializedData = JSON.stringify(data);
+                    db.run(insertQuery, [name, description, serializedData, thumbnail, width, height], function (err) {
+                        if (err) {
+                            console.log(err);
+                            res.status(500).json({ message: "Error saving plan" });
+                        } else {
+                            console.log('Plan saved successfully');
+                            res.status(200).json({ message: "Plan saved successfully" });
+                        }
+                    });
+                }
             }
         });
-    }
+    }    
 
 }
 
