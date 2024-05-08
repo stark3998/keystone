@@ -18,11 +18,14 @@ export const getDatabaseInstance = (): sqlite3.Database => {
 
 const createPlansTable = (): void => {
     dbInstance?.run(`CREATE TABLE IF NOT EXISTS plans (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            description TEXT,
-            data BLOB
-        )`, (err) => {
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        description TEXT,
+        data TEXT,
+        thumbnail TEXT,
+        width INTEGER,
+        height INTEGER
+    )`, (err) => {
         if (err) {
             console.error('Error creating plans table:', err);
         } else {

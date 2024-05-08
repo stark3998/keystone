@@ -2,11 +2,18 @@ import express from 'express';
 import { Validator } from '../support/validator';
 import { getDatabaseInstance } from '../service';
 
-// Define a type for the row object retrieved from the database
 interface PlanRow {
     name: string;
     description: string;
-    data: string; // Assuming data is stored as a string in the database
+    data: {
+        blocked: { x: number; y: number }[];
+        wifi: { x: number; y: number }[];
+        audio: { x: number; y: number }[];
+        access: { x: number; y: number }[];
+    };
+    thumbnail: string;
+    width: number;
+    height: number;
 }
 
 class FloorplanCntrl {
@@ -52,15 +59,12 @@ class FloorplanCntrl {
 
         // Get all plans from the database
         const selectQuery = `SELECT * FROM plans`;
-        db.all(selectQuery, [], (err: any, rows: any) => {
+        db.all(selectQuery, [], (err: any, rows: PlanRow[]) => {
             if (err) {
                 res.status(500).json({ message: "Error fetching plans" });
             } else {
                 res.status(200).json({ plans: rows });
             }
-
-            // // Close the database connection
-            // db.close();
         });
 
     }
@@ -81,22 +85,19 @@ class FloorplanCntrl {
             } else {
                 if (row) {
                     // Deserialize data from bytes to JSON
-                    const data = JSON.parse(row.data);
-                    res.status(200).json({ name: row.name, description: row.description, data });
+                    //const data = JSON.parse(row.data);
+                    res.status(200).json({ plan: row});
                 } else {
                     res.status(404).json({ message: "Plan not found" });
                 }
             }
-
-            // // Close the database connection
-            // db.close();
         });
     }
 
     public static savePlan(req: express.Request, res: express.Response): void {
         console.log('savePlan -', req.url);
 
-        const { name, description, data } = req.body;
+        const { name, description, data, thumbnail, width, height } = req.body;
 
         // Connect to the SQLite database
         const db = getDatabaseInstance();
@@ -104,13 +105,12 @@ class FloorplanCntrl {
         console.log('db - ', db);
 
         // Save plan to database
-        const insertQuery = `INSERT INTO plans (name, description, data) VALUES (?, ?, ?)`;
+        const insertQuery = `INSERT INTO plans (name, description, data, thumbnail, width, height) VALUES (?, ?, ?, ?, ?, ?)`;
 
         // Convert data object to JSON string
         const serializedData = JSON.stringify(data);
 
-
-        db.run(insertQuery, [name, description, serializedData], function (err) {
+        db.run(insertQuery, [name, description, serializedData, thumbnail, width, height], function (err) {
             if (err) {
                 console.log(err);
                 res.status(500).json({ message: "Error saving plan" });
