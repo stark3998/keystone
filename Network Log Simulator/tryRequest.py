@@ -1,5 +1,6 @@
 import asyncio
 import requests
+import subprocess
 
 async def fetch_data_stream(url):
     try:
@@ -24,4 +25,9 @@ async def main():
 
 # Run the asynchronous event loop
 if __name__ == "__main__":
-    asyncio.run(main())
+    # asyncio.run(main())
+    # subprocess.run(["cd","/Users/vanilla/College work/Capstone/keystone/Network Log Simulator/"], shell=True)
+    # result = subprocess.run(["cd ./Network\ Log\ Simulator/ && (npm run start &)"], shell=True, capture_output=True, text=True) #&&","ls","-l
+    # print(f"Output: {result.stdout}, Error: {result.stderr}")
+    subprocess.Popen(["(npm run start &)"], shell=True, cwd='Network Log Simulator')
+    print("Triggered Network Logs Simulator, Use 'ps -ax | grep Server.js' to kill the npm server")
