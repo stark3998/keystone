@@ -1,6 +1,7 @@
 import express from 'express';
 import { Validator } from '../support/validator';
 import { LogGenerator } from '../utilities/logGenerator';
+import { FloorPlan } from '../external/floorPlan';
 
 class LogGeneratorCntrl {
     public router: express.Router = express.Router();
@@ -22,15 +23,10 @@ class LogGeneratorCntrl {
     public static setRouterMiddleWare(router: express.Router): void {
         router.route('/logs')
             .get(Validator.validate, LogGeneratorCntrl.getWifiLogs);
+        router.route('/floorplan')
+            .get(Validator.validate, LogGeneratorCntrl.getFloorPlan);
     }
 
-    /**
-    * The method getStates. undefined
-    *
-    * @param req of type express.Request
-    * @param res of type express.Response
-    * @returns void
-    */
     public static getWifiLogs(req: express.Request, res: express.Response): void {
         console.log('getWifiLogs -', req.url);
         
@@ -40,7 +36,7 @@ class LogGeneratorCntrl {
         });
 
         var generateAndStreamData = () => {
-            LogGenerator.generateWifiAccessPointLogs().then(resp => {
+            LogGenerator.getNetworkLogs().then(resp => {
                 // Stream data to the client
                 res.write(JSON.stringify(resp.log) + '\n\n');
             })
@@ -58,6 +54,14 @@ class LogGeneratorCntrl {
             res.end();
         }, 50000); // End the stream after 5 seconds (for demonstration)
 
+    }
+
+    public static getFloorPlan(req: express.Request, res: express.Response): void {
+        console.log('getFloorPlan -', req.url);
+        FloorPlan.getFloorPlan().then(ress => 
+            res.status(200).send(ress)
+        )
+        .catch(err => res.status(500).send(err));
     }
 
 }
