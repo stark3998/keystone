@@ -30,7 +30,8 @@ export class LogGenerator {
     // Get a random mac address from the generated list
     private static getRandomMacAddress(): String {
       const index = Math.floor(Math.random() * this.generatedMacAddresses.length);
-      return this.generatedMacAddresses.splice(index, 1)[0];
+      // console.log(this.generatedMacAddresses.splice(index, 1)[0])
+      return this.generatedMacAddresses[index];
     }
 
     // Function to generate a random RSSI value

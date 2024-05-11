@@ -29,7 +29,8 @@ class LogGeneratorCntrl {
 
     public static getWifiLogs(req: express.Request, res: express.Response): void {
         console.log('getWifiLogs -', req.url);
-        FloorPlan.getFloorPlan('DBH%206th%20Floor').then(floorPlanData => {
+        var floorname: string = req.query.name ? req.query.name.toString() : 'DBH%206th%20Floor';
+        FloorPlan.getFloorPlan(floorname).then(floorPlanData => {
 
             res.writeHead(200, {
                 'Content-Type': 'text/plain',
@@ -40,6 +41,7 @@ class LogGeneratorCntrl {
                 LogGenerator.generateWifiAccessPointLogs(floorPlanData.plan).then(resp => {
                     // Stream data to the client
                     res.write(JSON.stringify(resp.log) + '\n\n');
+
                 })
                 .catch(resp => {
                     // Stream data to the client
