@@ -52,7 +52,7 @@ export class Server {
     this.apiApp.use(helmet());
     this.apiApp.use(express.static('static'));
     this.apiApp.use(cors({
-      origin: ['http://localhost:4200', 'http://127.0.0.1:4200', 'http://localhost:4400'],
+      origin: ['http://localhost:4200', 'http://127.0.0.1:4200', 'http://localhost:4400', 'http://localhost:3000'],
       credentials: true
     }));
     this.apiApp.use(cookieParser());

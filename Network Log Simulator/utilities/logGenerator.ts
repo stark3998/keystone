@@ -43,25 +43,25 @@ export class LogGenerator {
         return Math.floor(Math.random() * (1000000 - 1000) + 1000);
     }
 
-    public static getNetworkLogs(): Promise<logResponse> {
-      return new Promise((resolve, reject) => {
-        FloorPlan.getFloorPlan().then(floorPlanData => {
-          this.generateWifiAccessPointLogs(floorPlanData.plan).then(response => {
-              // console.log('Generated Log:', response.log);
-              return resolve(response);
-          }).catch(error => {
-              console.error('Error generating log:', error);
-              return reject({"statusCode": 500, "log": undefined});
-          });
-        })
-        .catch(err => {
-          console.log(err);
-          return reject({"statusCode": 500, "log": undefined});
-        });
-      })
+    // public static getNetworkLogs(): Promise<logResponse> {
+    //   return new Promise((resolve, reject) => {
+    //     FloorPlan.getFloorPlan().then(floorPlanData => {
+    //       this.generateWifiAccessPointLogs(floorPlanData.plan).then(response => {
+    //           // console.log('Generated Log:', response.log);
+    //           return resolve(response);
+    //       }).catch(error => {
+    //           console.error('Error generating log:', error);
+    //           return reject({"statusCode": 500, "log": undefined});
+    //       });
+    //     })
+    //     .catch(err => {
+    //       console.log(err);
+    //       return reject({"statusCode": 500, "log": undefined});
+    //     });
+    //   })
        
       
-    }
+    // }
 
 
     // Generate a list of fake WiFi access point logs

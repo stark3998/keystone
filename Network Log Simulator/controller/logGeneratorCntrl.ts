@@ -29,36 +29,48 @@ class LogGeneratorCntrl {
 
     public static getWifiLogs(req: express.Request, res: express.Response): void {
         console.log('getWifiLogs -', req.url);
-        
-        res.writeHead(200, {
-            'Content-Type': 'text/plain',
-            'Transfer-Encoding': 'chunked'
-        });
+        FloorPlan.getFloorPlan('DBH%206th%20Floor').then(floorPlanData => {
 
-        var generateAndStreamData = () => {
-            LogGenerator.getNetworkLogs().then(resp => {
-                // Stream data to the client
-                res.write(JSON.stringify(resp.log) + '\n\n');
-            })
-            .catch(resp => {
-                // Stream data to the client
-                res.write(JSON.stringify(resp.error) + '\n\n');
+            res.writeHead(200, {
+                'Content-Type': 'text/plain',
+                'Transfer-Encoding': 'chunked'
             });
-        }
+    
+            var generateAndStreamData = () => {
+                LogGenerator.generateWifiAccessPointLogs(floorPlanData.plan).then(resp => {
+                    // Stream data to the client
+                    res.write(JSON.stringify(resp.log) + '\n\n');
+                })
+                .catch(resp => {
+                    // Stream data to the client
+                    res.write(JSON.stringify(resp.error) + '\n\n');
+                });
+            }
+    
+            const intervalId = setInterval(generateAndStreamData, 1000);
+    
+            // End the stream after 5 seconds (for demonstration)
+            setTimeout(() => {
+                clearInterval(intervalId);
+                res.end();
+            }, 50000); // End the stream after 5 seconds (for demonstration)
 
-        const intervalId = setInterval(generateAndStreamData, 1000);
-
-        // End the stream after 5 seconds (for demonstration)
-        setTimeout(() => {
-            clearInterval(intervalId);
-            res.end();
-        }, 50000); // End the stream after 5 seconds (for demonstration)
-
+            // this.generateWifiAccessPointLogs(floorPlanData.plan).then(response => {
+            //     // console.log('Generated Log:', response.log);
+            //     return resolve(response);
+            // }).catch(error => {
+            //     console.error('Error generating log:', error);
+            //     return reject({"statusCode": 500, "log": undefined});
+            // });
+          })
+          .catch(err => {
+            res.write(JSON.stringify(err) + '\n\n');
+          });
     }
 
     public static getFloorPlan(req: express.Request, res: express.Response): void {
         console.log('getFloorPlan -', req.url);
-        FloorPlan.getFloorPlan().then(ress => 
+        FloorPlan.getFloorPlan('DBH%206th%20Floor').then(ress => 
             res.status(200).send(ress)
         )
         .catch(err => res.status(500).send(err));
