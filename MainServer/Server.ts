@@ -10,7 +10,7 @@ import { configuration } from './support/appConfig';
 
 import { exampleCntrl } from './controller/ExampleCntrl';
 import { floorplanCntrl } from './controller/FloorplanCntrl';
-import { escapeRouteCntrl } from './controller/escapeRoutreCntrl';
+import { escapeRouteCntrl } from './controller/EscapeRouteCntrl';
 
 
 

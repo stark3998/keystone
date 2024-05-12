@@ -72,10 +72,9 @@ document.addEventListener('DOMContentLoaded', () => {
     canvas.width = 600; // Set the width of the canvas
     canvas.height = 600; // Set the height of the canvas
 
-    var url0 = 'http://localhost:4000/v1/route?choice=0&startx=0&starty=0&goalx=3&goaly=3'
-    var url1 = 'http://localhost:4000/v1/route?choice=1&startx=0&starty=0&goalx=9&goaly=1'
+    var url = 'http://localhost:4000/v1/userRoute?floorplanName=DBH 5th Floor&userX=14&userY=9'
     // Make a GET request to your Express server to fetch the path data
-    fetch(url1)
+    fetch(url)
         .then(response => response.json())
         .then(pathData => {
             console.log("pathdata" + JSON.stringify(pathData));
@@ -123,7 +122,7 @@ function animateMarker(pathData) {
         setTimeout(() => {
             marker.style.top = (point.x * 50 + 15) + 'px'; // Adjusted for marker size
             marker.style.left = (point.y * 50 + 15) + 'px'; // Adjusted for marker size
-        }, index * 1000); // Adjust the delay as needed
+        }, index * 700); // Adjust the delay as needed
     });
 }
 

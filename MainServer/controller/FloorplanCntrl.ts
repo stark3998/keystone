@@ -1,20 +1,8 @@
-import express from "express";
-import { Validator } from "../support/validator";
-import { getDatabaseInstance } from "../service";
-
-interface PlanRow {
-  name: string;
-  description: string;
-  data: {
-    blocked: { x: number; y: number }[];
-    wifi: { x: number; y: number }[];
-    audio: { x: number; y: number }[];
-    access: { x: number; y: number }[];
-  };
-  thumbnail: string;
-  width: number;
-  height: number;
-}
+import express from 'express';
+import { Validator } from '../support/validator';
+import { getDatabaseInstance } from '../service';
+import { PlanRow } from '../support/interfaces';
+import { floorplan } from '../utilities/floorplan';
 
 class FloorplanCntrl {
   public router: express.Router = express.Router();
@@ -55,26 +43,25 @@ class FloorplanCntrl {
   public static getAllPlans(req: express.Request, res: express.Response): void {
     console.log("getAllPlans -", req.url);
 
-    // Connect to the SQLite database
-    const db = getDatabaseInstance();
-
-    // Get all plans from the database
-    const selectQuery = `SELECT * FROM plans`;
-    db.all(selectQuery, [], (err: any, rows: PlanRow[]) => {
-      if (err) {
-        res.status(500).json({ message: "Error fetching plans" });
-      } else {
-        rows = rows.map((row) => {
-          const data = JSON.parse(row.data.toString());
-          return {
-            ...row,
-            data,
-          };
+        floorplan.getAllPlans((err: any, rows: PlanRow[] | null) => {
+            if (err) {
+                res.status(500).json({ message: "Error fetching plan" });
+            } else {
+                if (rows) {
+                    rows = rows.map((row) => {
+                      const data = JSON.parse(row.data.toString());
+                      return {
+                        ...row,
+                        data,
+                      };
+                    });
+                    res.status(200).json({ plans: rows });
+                } else {
+                    res.status(404).json({ message: "Plans not found" });
+                }
+            }
         });
-        res.status(200).json({ plans: rows });
-      }
-    });
-  }
+    }
 
   public static getPlanByName(
     req: express.Request,
@@ -84,77 +71,45 @@ class FloorplanCntrl {
 
     const { name } = req.query;
 
-    // Connect to the SQLite database
-    const db = getDatabaseInstance();
-
-    // Get plan from database by name
-    const selectQuery = `SELECT * FROM plans WHERE name = ?`;
-    db.get(selectQuery, [name], function (err, row: PlanRow) {
-      if (err) {
-        res.status(500).json({ message: "Error fetching plan" });
-      } else {
-        if (row) {
-          // Deserialize data from bytes to JSON
-          row.data = JSON.parse(row.data.toString());
-          res.status(200).json({ plan: row });
-        } else {
-          res.status(404).json({ message: "Plan not found" });
-        }
-      }
-    });
-  }
-
-  public static savePlan(req: express.Request, res: express.Response): void {
-    console.log("savePlan -", req.url);
-
-    const { name, description, data, thumbnail, width, height } = req.body;
-
-    // Connect to the SQLite database
-    const db = getDatabaseInstance();
-
-    // Check if the plan with the given name already exists
-    const selectQuery = `SELECT * FROM plans WHERE name = ?`;
-    db.get(selectQuery, [name], function (err, row: PlanRow) {
-      if (err) {
-        res.status(500).json({ message: "Error checking existing plan" });
-      } else {
-        if (row) {
-          // Plan already exists, update its information
-          const updateQuery = `UPDATE plans SET description = ?, data = ?, thumbnail = ?, width = ?, height = ? WHERE name = ?`;
-          const serializedData = JSON.stringify(data);
-          db.run(
-            updateQuery,
-            [description, serializedData, thumbnail, width, height, name],
-            function (err) {
-              if (err) {
-                res.status(500).json({ message: "Error updating plan" });
-              } else {
-                console.log("Plan updated successfully");
-                res.status(200).json({ message: "Plan updated successfully" });
-              }
+        floorplan.getPlanByName(name, (err: any, row: PlanRow | null) => {
+            if (err) {
+                res.status(500).json({ message: "Error fetching plan" });
+            } else {
+                if (row) {
+                    row.data = JSON.parse(row.data.toString());
+                    res.status(200).json({ plan: row });
+                } else {
+                    res.status(404).json({ message: "Plan not found" });
+                }
             }
-          );
-        } else {
-          // Plan doesn't exist, insert new plan
-          const insertQuery = `INSERT INTO plans (name, description, data, thumbnail, width, height) VALUES (?, ?, ?, ?, ?, ?)`;
-          const serializedData = JSON.stringify(data);
-          db.run(
-            insertQuery,
-            [name, description, serializedData, thumbnail, width, height],
-            function (err) {
-              if (err) {
-                console.log(err);
+        });
+    }
+
+    public static savePlan(req: express.Request, res: express.Response): void {
+        console.log('savePlan -', req.url);
+    
+        const { name, description, data, thumbnail, width, height } = req.body;
+    
+        const planData: PlanRow = {
+            name,
+            description,
+            data,
+            thumbnail,
+            width,
+            height
+        };
+
+        floorplan.savePlan(planData, function (err) {
+            if (err) {
+                console.error(err);
                 res.status(500).json({ message: "Error saving plan" });
-              } else {
-                console.log("Plan saved successfully");
+            } else {
+                console.log('Plan saved successfully');
                 res.status(200).json({ message: "Plan saved successfully" });
-              }
             }
-          );
-        }
-      }
-    });
-  }
+        });
+    }    
+
 }
 
 export let floorplanCntrl = new FloorplanCntrl();
