@@ -1,6 +1,7 @@
 import { faker } from '@faker-js/faker'
 import { log, logResponse } from '../support/interfaces'
 import { FloorPlan } from '../external/floorPlan';
+import { UserSimulator } from './userSimulator';
 
 export class LogGenerator {
 
@@ -64,6 +65,9 @@ export class LogGenerator {
       
     // }
 
+    public static initializeUsers(floorPlan: any){
+      UserSimulator.initializeUsers(floorPlan);
+    }
 
     // Generate a list of fake WiFi access point logs
     public static generateWifiAccessPointLogs(floorPlan: any): Promise<logResponse> {
@@ -82,28 +86,31 @@ export class LogGenerator {
 
 
 
+        // // Generate or update user location
+        // const macAddress = this.getRandomMacAddress();
+        // const location = this.generateOrUpdateUserLocation(floorPlan, macAddress.toString());
+
         // Generate or update user location
-        const macAddress = this.getRandomMacAddress();
-        const location = this.generateOrUpdateUserLocation(floorPlan, macAddress.toString());
+        const location = UserSimulator.updateUserlocation(floorPlan);
 
         const logs = [];
           var logEntry: log = {
             'Device Status': deviceStatuses[Math.floor(Math.random() * deviceStatuses.length)],
             'Name': faker.person.fullName(),
             'User Name': faker.internet.userName(),
-            'MAC Address': macAddress,
+            'MAC Address': location.macAddress,
             'IP Address': faker.internet.ip(),
             'OS': operatingSystems[Math.floor(Math.random() * operatingSystems.length)],
-            'Associated Access Point': accessPoints[Math.floor(Math.random() * accessPoints.length)],
+            'Associated Access Point': 'AP' + location.nap.toString(),
             'Associated SSID': ssids[Math.floor(Math.random() * ssids.length)],
-            'RSSI (dBm)': this.generateRssi(),
-            'Best RSSI (dBm)': this.generateRssi(),
+            'RSSI (dBm)': location.signalStrength,
+            'Best RSSI (dBm)': location.signalStrength,
             'Uplink Data': this.generateDataTransferAmount(),
             'Downlink Data': this.generateDataTransferAmount(),
             'Avg. data rate': Math.floor(Math.random() * 1000) + 1,
             'Connected / Disconnected Since': faker.date.recent().toISOString(),
             'First Detected At': faker.date.past().toISOString(),
-            'Location': location,
+            'Location': {x: location.x, y: location.y},
             'Sticky': Math.random() < 0.5,
             'Tag': faker.word.words(5),
           };

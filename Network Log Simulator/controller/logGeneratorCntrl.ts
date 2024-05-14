@@ -32,6 +32,7 @@ class LogGeneratorCntrl {
         var floorname: string = req.query.name ? req.query.name.toString() : 'DBH%206th%20Floor';
         FloorPlan.getFloorPlan(floorname).then(floorPlanData => {
 
+            LogGenerator.initializeUsers(floorPlanData.plan);
             res.writeHead(200, {
                 'Content-Type': 'text/plain',
                 'Transfer-Encoding': 'chunked'
