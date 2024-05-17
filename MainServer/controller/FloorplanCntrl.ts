@@ -31,6 +31,10 @@ class FloorplanCntrl {
       .get(Validator.validate, FloorplanCntrl.getPlanByName);
 
     router.route("/savePlan").post(Validator.validate, FloorplanCntrl.savePlan);
+    
+    // Adding the delete route
+    router.route("/deletePlan").delete(Validator.validate, FloorplanCntrl.deletePlan);
+
   }
 
   /**
@@ -110,6 +114,26 @@ class FloorplanCntrl {
         });
     }    
 
+    // New deletePlan method
+    public static deletePlan(req: express.Request, res: express.Response): void {
+      console.log('deletePlan -', req.url);
+
+      const { name } = req.query;
+
+      if (!name) {
+          res.status(400).json({ message: "Plan name is required" });
+      }
+
+      floorplan.deletePlan(name, function (err) {
+          if (err) {
+              console.error(err);
+              res.status(500).json({ message: "Error deleting plan" });
+          } else {
+              console.log('Plan deleted successfully');
+              res.status(200).json({ message: "Plan deleted successfully" });
+          }
+      });
+  }
 }
 
 export let floorplanCntrl = new FloorplanCntrl();

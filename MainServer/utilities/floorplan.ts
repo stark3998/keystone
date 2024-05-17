@@ -6,7 +6,7 @@ class Floorplan {
 
     public getPlanByName(name: any, callback: (err: any, row: PlanRow | null) => void): void {
         console.log('getPlanByName in floorplan.ts - ', name);
-        
+
         // Connect to the SQLite database
         const db = getDatabaseInstance();
 
@@ -23,7 +23,7 @@ class Floorplan {
 
     public getAllPlans(callback: (err: any, rows: PlanRow[] | null) => void): void {
         console.log('getAllPlans in floorplan.ts - ');
-        
+
         // Connect to the SQLite database
         const db = getDatabaseInstance();
 
@@ -37,9 +37,15 @@ class Floorplan {
             }
         });
     }
-    
+
     public savePlan(planData: PlanRow, callback: (err: any) => void): void {
         const { name, description, data, thumbnail, width, height } = planData;
+
+        // Check if data.access exists
+        if (!data || !Array.isArray(data.access)) {
+            callback({ message: "Access points are absent in the request" });
+            return;
+        }
 
         // Connect to the SQLite database
         const db = getDatabaseInstance();
@@ -69,6 +75,23 @@ class Floorplan {
         });
     }
 
+    public deletePlan(name: any, callback: (err: any) => void): void {
+        console.log('deletePlan in floorplan.ts - ', name);
+
+        // Connect to the SQLite database
+        const db = getDatabaseInstance();
+
+        // Delete plan from database by name
+        const deleteQuery = `DELETE FROM plans WHERE name = ?`;
+        db.run(deleteQuery, [name], function (err) {
+            if (err) {
+                callback(err);
+            } else {
+                callback(null);
+            }
+        });
+    }
+
     public transformMaze(plan: PlanRow): number[][] {
         let rows: number = plan.height;
         let cols: number = plan.width;
@@ -90,7 +113,7 @@ class Floorplan {
         return maze;
     }
 
-    public getAccessPoints(plan: PlanRow): myNode[]{
+    public getAccessPoints(plan: PlanRow): myNode[] {
         var accessPoints: myNode[] = [];
         const data = JSON.parse(plan.data.toString());
         data.access.forEach((ap: { x: number; y: number; }) => {

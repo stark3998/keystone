@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
     canvas.width = 600; // Set the width of the canvas
     canvas.height = 600; // Set the height of the canvas
 
-    var url = 'http://localhost:4000/v1/userRoute?floorplanName=DBH 5th Floor&userX=14&userY=9'
+    var url = 'http://localhost:4000/v1/userRoute?floorplanName=DBH 5th Floor&userX=10&userY=9'
     // Make a GET request to your Express server to fetch the path data
     fetch(url)
         .then(response => response.json())
