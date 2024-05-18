@@ -13,7 +13,7 @@ export class UserSimulator {
             // Create a list of allowed locations based on the floor plan
             const allowedLocations: { x: number, y: number }[] = [];
             // console.log(floorPlan);
-            // console.log(floorPlan.width, floorPlan.height)
+            // console.log(floorPlan.width, floorPlan.height)9       
             for (let x = 1; x <= floorPlan.width; x++) {
                 for (let y = 1; y <= floorPlan.height; y++) {
                     const location = { x, y };
@@ -65,7 +65,8 @@ export class UserSimulator {
                 { x: userLocation.x + 1, y: userLocation.y },
                 { x: userLocation.x - 1, y: userLocation.y },
                 { x: userLocation.x, y: userLocation.y + 1 },
-                { x: userLocation.x, y: userLocation.y - 1 }
+                { x: userLocation.x, y: userLocation.y - 1 },
+                {x: userLocation.x, y: userLocation.y}
 
             ];
             const availableLocations = possibleLocations.filter(loc => !this.isLocationBlocked(loc, floorPlan));

@@ -7,7 +7,7 @@ export class LogGenerator {
 
     constructor() {
       // Initialize any properties or perform any setup logic here
-      LogGenerator.generateRandomMacAddresses();
+      // LogGenerator.generateRandomMacAddresses();
   }
 
     // Dictionary to store user mac addresses and their corresponding locations

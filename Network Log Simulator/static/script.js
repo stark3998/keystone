@@ -20,8 +20,8 @@ fetch(url)
         if (done) {
           console.log('Stream finished');
           // Parse the accumulated data as JSON
-          const jsonData = JSON.parse(accumulatedData);
-          console.log('Received data:', jsonData);
+          // const jsonData = JSON.parse(accumulatedData);
+          // console.log('Received data:', jsonData);
           return;
         }
 
