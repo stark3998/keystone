@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
   canvas.width = 600; // Set the width of the canvas
   canvas.height = 600; // Set the height of the canvas
 
-  var url = 'http://localhost:5001/v1/logs/logs'
+  var url = 'http://localhost:4000/v1/userlocation/userlocation'
 fetch(url)
   .then(response => {
     createMaze();

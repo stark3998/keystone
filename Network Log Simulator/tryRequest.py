@@ -18,16 +18,16 @@ async def fetch_data_stream(url):
 
 async def main():
     # URL of the data stream API
-    url = 'http://localhost:5001/v1/logs/logs'  # Replace with your API endpoint
+    url = 'http://localhost:4000/v1/userlocation/userlocation'  # Replace with your API endpoint
 
     # Fetch data stream asynchronously
     await fetch_data_stream(url)
 
 # Run the asynchronous event loop
 if __name__ == "__main__":
-    # asyncio.run(main())
+    asyncio.run(main())
     # subprocess.run(["cd","/Users/vanilla/College work/Capstone/keystone/Network Log Simulator/"], shell=True)
     # result = subprocess.run(["cd ./Network\ Log\ Simulator/ && (npm run start &)"], shell=True, capture_output=True, text=True) #&&","ls","-l
     # print(f"Output: {result.stdout}, Error: {result.stderr}")
-    subprocess.Popen(["(npm run start &)"], shell=True, cwd='Network Log Simulator')
-    print("Triggered Network Logs Simulator, Use 'ps -ax | grep Server.js' to kill the npm server")
+    # subprocess.Popen(["(npm run start &)"], shell=True, cwd='Network Log Simulator')
+    # print("Triggered Network Logs Simulator, Use 'ps -ax | grep Server.js' to kill the npm server")

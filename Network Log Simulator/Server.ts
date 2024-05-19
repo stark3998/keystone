@@ -47,7 +47,14 @@ export class Server {
   * @returns void
   */
   public setMiddleware(): void {
-    this.apiApp.use(helmet());
+    this.apiApp.use(helmet({
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: ["'self'"],
+          connectSrc: ["'self'", 'http://127.0.0.1:4000', 'http://localhost:4000']
+        }
+      }
+    }));
     this.apiApp.use(cors({
       origin: ['http://localhost:4200', 'http://127.0.0.1:4200', 'http://localhost:4400', 'http://localhost:3000'],
       credentials: true

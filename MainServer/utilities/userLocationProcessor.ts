@@ -1,10 +1,10 @@
 export class UserLocationProcessor {
 
-    public static processUserLocation(chunk: any, floorPlan: any): {mac: string, location: {x: number, y: number}} {
+    public static processUserLocation(chunk: any, floorPlan: any): {'MAC Address': string, Location: {x: number, y: number}} {
         var position = this.findAP(parseInt(chunk['Associated Access Point'].substr(2), 10), floorPlan).pos;
         var radius = this.calculateSignalStrength(chunk['RSSI (dBm)']);
         var randomLocation = this.pickRandomPoint(this.generatePointsOnCircle(position.x, position.y, radius, floorPlan.width, floorPlan.height));
-        return {mac: chunk['MAC Address'], location: randomLocation}
+        return {'MAC Address': chunk['MAC Address'], Location: randomLocation}
 
     }
 
