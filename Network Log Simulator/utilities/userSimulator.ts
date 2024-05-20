@@ -11,11 +11,9 @@ export class UserSimulator {
         // Helper function to get a random location within the floor plan
         private static getRandomLocation(floorPlan: any): { x: number, y: number } {
             // Create a list of allowed locations based on the floor plan
-            const allowedLocations: { x: number, y: number }[] = [];
-            // console.log(floorPlan);
-            // console.log(floorPlan.width, floorPlan.height)9       
-            for (let x = 1; x <= floorPlan.width; x++) {
-                for (let y = 1; y <= floorPlan.height; y++) {
+            const allowedLocations: { x: number, y: number }[] = [];   
+            for (let x = 0; x < floorPlan.width; x++) {
+                for (let y = 0; y < floorPlan.height; y++) {
                     const location = { x, y };
                     if (!this.isLocationBlocked(location, floorPlan)) {
                         allowedLocations.push(location);
@@ -42,9 +40,6 @@ export class UserSimulator {
             // Loop through each user location
             for (let i = 0; i < this.numberOfUsers; i++) {
                 var randomPos = this.getRandomLocation(floorPlan);
-                // // Randomly generate x and y within the bounds of the floor plan
-                // const randomX = Math.floor(Math.random() * floorPlan.width) + 1;
-                // const randomY = Math.floor(Math.random() * floorPlan.height) + 1;
 
                 // Find the nearest access point to the user's location
                 const nearestAP = this.findNearestAP({ x: randomPos.x, y: randomPos.y, nap: 0 }, floorPlan);

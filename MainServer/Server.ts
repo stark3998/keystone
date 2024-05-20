@@ -3,29 +3,25 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import http from 'http';
-import path from 'path';
-
 import { InputValidationError } from 'openapi-validator-middleware';
-import { configuration } from './support/appConfig';
 
+import { configuration } from './support/appConfig';
 import { exampleCntrl } from './controller/ExampleCntrl';
 import { floorplanCntrl } from './controller/FloorplanCntrl';
 import { escapeRouteCntrl } from './controller/EscapeRouteCntrl';
 import { locationProcessorCntrl } from './controller/LocationProcessorCntrl';
 
-
-
-
+/**
+ * Class representing the server.
+ */
 export class Server {
 
   private apiApp: express.Express;
   private port: number;
 
-
   /**
-  * The method constructor. Constructor
-  *
-  */
+   * Constructor for the Server class.
+   */
   public constructor() {
     this.apiApp = express();
     this.port = configuration.webport;
@@ -34,10 +30,9 @@ export class Server {
   }
 
   /**
-  * The method start. 
-  *
-  * @returns Promise<void>
-  */
+   * Start the server.
+   * @returns Promise<void>
+   */
   public async start(): Promise<void> {
     const server: http.Server = this.apiApp.listen(this.port, () => {
       console.log(`------------API Web Server Starting on port ${this.port} -------------`);
@@ -45,10 +40,9 @@ export class Server {
   }
 
   /**
-  * The method setMiddleware. 
-  *
-  * @returns void
-  */
+   * Set up middleware for the server.
+   * @returns void
+   */
   public setMiddleware(): void {
     this.apiApp.use(helmet());
     this.apiApp.use(express.static('static'));
@@ -58,16 +52,14 @@ export class Server {
     }));
     this.apiApp.use(cookieParser());
     this.apiApp.use(express.json());
-
     this.apiApp.use(express.urlencoded({ 'extended': true }));
     // this.apiApp.use(express.static(path.join(__dirname, '..', 'static')));
   }
 
   /**
-  * The method setRouterMiddleWare. 
-  *
-  * @returns void
-  */
+   * Set up router middleware for the server.
+   * @returns void
+   */
   public setRouterMiddleWare(): void {
     this.apiApp.use('/v1/example', exampleCntrl.router);
     this.apiApp.use('/v1/floorplan', floorplanCntrl.router);
@@ -79,11 +71,16 @@ export class Server {
       } 
     });
   }
-
 }
 
-
+// Create an instance of the Server class
 const api: Server = new Server();
+
+// Set up middleware
 api.setMiddleware();
+
+// Set up router middleware
 api.setRouterMiddleWare();
+
+// Start the server
 api.start();

@@ -1,13 +1,26 @@
+import { PlanRow } from "../support/interfaces";
+
 export class UserLocationProcessor {
 
-    public static processUserLocation(chunk: any, floorPlan: any): {'MAC Address': string, Location: {x: number, y: number}} {
-        var position = this.findAP(parseInt(chunk['Associated Access Point'].substr(2), 10), floorPlan).pos;
-        var radius = this.calculateSignalStrength(chunk['RSSI (dBm)']);
-        var randomLocation = this.pickRandomPoint(this.generatePointsOnCircle(position.x, position.y, radius, floorPlan.width, floorPlan.height));
-        return {'MAC Address': chunk['MAC Address'], Location: randomLocation}
-
+    /**
+     * Process user location based on the received data chunk and floor plan.
+     * @param chunk The data chunk containing user information.
+     * @param floorPlan The floor plan data.
+     * @returns Object containing the MAC Address and the random location within the signal radius.
+     */
+    public static processUserLocation(chunk: any, floorPlan: PlanRow): { 'MAC Address': string, Location: { x: number, y: number } } {
+        const apNumber = parseInt(chunk['Associated Access Point'].substr(2), 10);
+        const position = this.findAP(apNumber, floorPlan).pos;
+        const radius = this.calculateSignalStrength(chunk['RSSI (dBm)']);
+        const randomLocation = this.pickRandomPoint(this.generatePointsOnCircle(position.x, position.y, radius, floorPlan.width, floorPlan.height));
+        return { 'MAC Address': chunk['MAC Address'], Location: randomLocation };
     }
 
+    /**
+     * Calculate the signal strength based on RSSI (Received Signal Strength Indicator).
+     * @param signalStrength The received signal strength in dBm.
+     * @returns The calculated signal strength.
+     */
     private static calculateSignalStrength(signalStrength: number): number {
         // Assuming a simple signal strength model where signal strength decreases linearly with distance
         const maxSignalStrength = 100; // Maximum signal strength
@@ -19,6 +32,15 @@ export class UserLocationProcessor {
         return distance;
     }
 
+    /**
+     * Generate points on a circle with a given radius around a center point.
+     * @param x_center The x-coordinate of the center point.
+     * @param y_center The y-coordinate of the center point.
+     * @param radius The radius of the circle.
+     * @param width The width of the floor plan.
+     * @param height The height of the floor plan.
+     * @returns Array of points on the circumference of the circle.
+     */
     private static generatePointsOnCircle(x_center: number, y_center: number, radius: number, width: number, height: number): { x: number, y: number }[] {
         const points: { x: number, y: number }[] = [];
     
@@ -39,23 +61,32 @@ export class UserLocationProcessor {
     
         return points;
     }
-    
 
-    // Function to randomly pick a point from an array
+    /**
+     * Pick a random point from an array of points.
+     * @param points Array of points.
+     * @returns Randomly picked point.
+     */
     private static pickRandomPoint(points: { x: number, y: number }[]): { x: number, y: number } {
         const randomIndex = Math.floor(Math.random() * points.length);
         return points[randomIndex];
     }
 
-
-    private static findAP(apNumber: number, floorPlan: any): {pos: {x: number, y: number}} {
-    
-        var accessPoint;
+    /**
+     * Find the position of the access point in the floor plan.
+     * @param apNumber The number of the access point.
+     * @param floorPlan The floor plan data.
+     * @returns The position of the access point.
+     */
+    private static findAP(apNumber: number, floorPlan: PlanRow): { pos: { x: number, y: number } } {
+        let accessPoint;
         // Loop through each access point in the floor plan (wifi)
         for (let i = 0; i <= apNumber; i++) {
             accessPoint = floorPlan.data.wifi[i];
         }
-    
-        return {pos: accessPoint};
+        if (accessPoint == undefined) {
+            accessPoint = {x: 0, y: 0}
+        }
+        return { pos: accessPoint };
     }
 }

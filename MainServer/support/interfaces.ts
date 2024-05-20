@@ -11,3 +11,9 @@ export interface PlanRow {
     width: number;
     height: number;
 }
+
+export interface FloorPlanResponse { 
+    payload?: PlanRow, 
+    error?: string, 
+    code: number 
+}

@@ -1,12 +1,18 @@
-import { PlanRow } from '../support/interfaces';
+import { FloorPlanResponse, PlanRow } from '../support/interfaces';
 import { getDatabaseInstance } from '../service';
 import { myNode } from '../escapeRouteProcessor/A*';
 
-class Floorplan {
+/**
+ * Class representing operations related to floor plans.
+ */
+export class Floorplan {
 
+    /**
+     * Retrieves a floor plan by its name from the database.
+     * @param name - The name of the floor plan.
+     * @param callback - The callback function to handle the result.
+     */
     public getPlanByName(name: any, callback: (err: any, row: PlanRow | null) => void): void {
-        console.log('getPlanByName in floorplan.ts - ', name);
-
         // Connect to the SQLite database
         const db = getDatabaseInstance();
 
@@ -21,13 +27,15 @@ class Floorplan {
         });
     }
 
+    /**
+     * Retrieves all floor plans from the database.
+     * @param callback - The callback function to handle the result.
+     */
     public getAllPlans(callback: (err: any, rows: PlanRow[] | null) => void): void {
-        console.log('getAllPlans in floorplan.ts - ');
-
         // Connect to the SQLite database
         const db = getDatabaseInstance();
 
-        // Get plan from database by name
+        // Get all plans from the database
         const selectQuery = `SELECT * FROM plans`;
         db.all(selectQuery, [], function (err, rows: PlanRow[]) {
             if (err) {
@@ -38,6 +46,11 @@ class Floorplan {
         });
     }
 
+    /**
+     * Saves a floor plan to the database.
+     * @param planData - The data of the floor plan to be saved.
+     * @param callback - The callback function to handle the result.
+     */
     public savePlan(planData: PlanRow, callback: (err: any) => void): void {
         const { name, description, data, thumbnail, width, height } = planData;
 
@@ -75,9 +88,12 @@ class Floorplan {
         });
     }
 
+    /**
+     * Deletes a floor plan from the database by its name.
+     * @param name - The name of the floor plan to be deleted.
+     * @param callback - The callback function to handle the result.
+     */
     public deletePlan(name: any, callback: (err: any) => void): void {
-        console.log('deletePlan in floorplan.ts - ', name);
-
         // Connect to the SQLite database
         const db = getDatabaseInstance();
 
@@ -92,6 +108,11 @@ class Floorplan {
         });
     }
 
+    /**
+     * Transforms a floor plan data into a matrix representation (2D array).
+     * @param plan - The floor plan data.
+     * @returns A 2D array representing the floor plan.
+     */
     public transformMaze(plan: PlanRow): number[][] {
         let rows: number = plan.height;
         let cols: number = plan.width;
@@ -113,6 +134,11 @@ class Floorplan {
         return maze;
     }
 
+    /**
+     * Retrieves access points from a floor plan data.
+     * @param plan - The floor plan data.
+     * @returns An array of access points as myNode objects.
+     */
     public getAccessPoints(plan: PlanRow): myNode[] {
         var accessPoints: myNode[] = [];
         const data = JSON.parse(plan.data.toString());
@@ -124,6 +150,27 @@ class Floorplan {
         console.log("Access points are : ", accessPoints);
 
         return accessPoints;
+    }
+
+    public static getFloorPlanByName(name: any): Promise<FloorPlanResponse> {
+
+        return new Promise((resolve, reject) => {
+            floorplan.getPlanByName(name, (err: any, row: PlanRow | null) => {
+                if (err) {
+                    reject({error: "Error fetching plan", code: 500})
+                    // res.status(500).json({ message: "Error fetching plan" });
+                } else {
+                    if (row) {
+                        row.data = JSON.parse(row.data.toString());
+                        resolve({payload: row, code: 200})
+                        // res.status(200).json({ plan: row });
+                    } else {
+                        reject({error: "Plan not found", code: 404})
+                        // res.status(404).json({ message: "Plan not found" });
+                    }
+                }
+            });
+        })
     }
 
 }

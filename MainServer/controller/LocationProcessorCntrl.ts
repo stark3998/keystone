@@ -2,6 +2,8 @@ import express from 'express';
 import { Validator } from '../support/validator';
 import { UserLocation } from '../external/userLocation';
 import { UserLocationProcessor } from '../utilities/userLocationProcessor';
+import { Floorplan } from '../utilities/floorplan';
+import { FloorPlanResponse, PlanRow } from '../support/interfaces';
 
 class LocationProcessorCntrl {
     public router: express.Router = express.Router();
@@ -34,14 +36,14 @@ class LocationProcessorCntrl {
     */
     public static getUserLocation(req: express.Request, res: express.Response): void {
         console.log('getUserLocation -', req.url);
-        var floorname: string = req.query.name ? req.query.name.toString() : 'DBH%206th%20Floor';
-        UserLocation.getFloorPlan(floorname).then(floorPlanData => {
+        var floorname: string = req.query.name ? req.query.name.toString() : 'DBH 6th Floor';
+        Floorplan.getFloorPlanByName(floorname).then((floorPlanData: FloorPlanResponse) => {
             console.log("calling");
             res.writeHead(200, {
                 'Content-Type': 'text/plain',
                 'Transfer-Encoding': 'chunked'
             });
-            UserLocation.getUserLocation(floorname, LocationProcessorCntrl.processUserLocation, res, floorPlanData.plan).then(ress => {
+            UserLocation.getUserLocation(floorname, LocationProcessorCntrl.processUserLocation, res, floorPlanData.payload!).then(ress => {
                 res.end();
             })
             .catch(err => {
@@ -49,10 +51,12 @@ class LocationProcessorCntrl {
                 res.end();
             });
         })
+        .catch(err => {
+            res.status(err.code).send(err.error)
+        })
     }
 
     public static processUserLocation(parsed: any, res: express.Response, floorPlanData: any) {
-        // console.log("Parsed Data Chunk: ", parsed);
         var userLocation = UserLocationProcessor.processUserLocation(parsed, floorPlanData);
         res.write(JSON.stringify(userLocation) + '\n\n');
     }
