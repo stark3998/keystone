@@ -3,7 +3,7 @@ import { Validator } from '../support/validator';
 import { UserLocation } from '../external/userLocation';
 import { UserLocationProcessor } from '../utilities/userLocationProcessor';
 import { Floorplan } from '../utilities/floorplan';
-import { FloorPlanResponse, PlanRow } from '../support/interfaces';
+import { dbFloorRowResponse, PlanRow } from '../support/interfaces';
 
 class LocationProcessorCntrl {
     public router: express.Router = express.Router();
@@ -37,7 +37,7 @@ class LocationProcessorCntrl {
     public static getUserLocation(req: express.Request, res: express.Response): void {
         console.log('getUserLocation -', req.url);
         var floorname: string = req.query.name ? req.query.name.toString() : 'DBH 6th Floor';
-        Floorplan.getFloorPlanByName(floorname).then((floorPlanData: FloorPlanResponse) => {
+        Floorplan.getFloorPlanByName(floorname).then((floorPlanData: dbFloorRowResponse) => {
             console.log("calling");
             res.writeHead(200, {
                 'Content-Type': 'text/plain',

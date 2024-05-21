@@ -9,6 +9,7 @@ export class UserLocationProcessor {
      * @returns Object containing the MAC Address and the random location within the signal radius.
      */
     public static processUserLocation(chunk: any, floorPlan: PlanRow): { 'MAC Address': string, Location: { x: number, y: number } } {
+        console.log(chunk);
         const apNumber = parseInt(chunk['Associated Access Point'].substr(2), 10);
         const position = this.findAP(apNumber, floorPlan).pos;
         const radius = this.calculateSignalStrength(chunk['RSSI (dBm)']);
@@ -49,7 +50,7 @@ export class UserLocationProcessor {
             const y = y_center + radius * Math.sin(theta);
     
             // Ensure x and y are within bounds
-            if (x >= 0 && x <= width && y >= 0 && y <= height) {
+            if (x >= 0 && x < width && y >= 0 && y < height) {
                 points.push({ x: Math.ceil(x), y: Math.ceil(y) });
             }
         }

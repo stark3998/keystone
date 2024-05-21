@@ -1,8 +1,8 @@
 import express from 'express';
 import { Validator } from '../support/validator';
 import { getDatabaseInstance } from '../service';
-import { PlanRow } from '../support/interfaces';
-import { floorplan } from '../utilities/floorplan';
+import { dbFloorRowResponse, PlanRow } from '../support/interfaces';
+import { Floorplan, floorplan } from '../utilities/floorplan';
 
 class FloorplanCntrl {
   public router: express.Router = express.Router();
@@ -73,20 +73,23 @@ class FloorplanCntrl {
   ): void {
     console.log("getPlanByName -", req.url);
 
-    const { name } = req.query;
+    var name = req.query.name ? req.query.name.toString() : 'DBH 6th Floor';
 
-        floorplan.getPlanByName(name, (err: any, row: PlanRow | null) => {
-            if (err) {
-                res.status(500).json({ message: "Error fetching plan" });
-            } else {
-                if (row) {
-                    row.data = JSON.parse(row.data.toString());
-                    res.status(200).json({ plan: row });
-                } else {
-                    res.status(404).json({ message: "Plan not found" });
-                }
-            }
-        });
+    Floorplan.getFloorPlanByName(name).then((floorplan: dbFloorRowResponse) => res.status(floorplan.code).send({plan: floorplan.payload!}))
+    .catch((err: dbFloorRowResponse) => res.status(err.code).send({message: err.error!}));
+
+        // floorplan.getPlanByName(name, (err: any, row: PlanRow | null) => {
+        //     if (err) {
+        //         res.status(500).json({ message: "Error fetching plan" });
+        //     } else {
+        //         if (row) {
+        //             row.data = JSON.parse(row.data.toString());
+        //             res.status(200).json({ plan: row });
+        //         } else {
+        //             res.status(404).json({ message: "Plan not found" });
+        //         }
+        //     }
+        // });
     }
 
     public static savePlan(req: express.Request, res: express.Response): void {
