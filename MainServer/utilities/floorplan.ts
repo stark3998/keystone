@@ -1,4 +1,4 @@
-import { FloorPlanResponse, PlanRow } from '../support/interfaces';
+import { dbFloorRowResponse, PlanRow } from '../support/interfaces';
 import { getDatabaseInstance } from '../service';
 import { myNode } from '../escapeRouteProcessor/A*';
 
@@ -152,21 +152,17 @@ export class Floorplan {
         return accessPoints;
     }
 
-    public static getFloorPlanByName(name: any): Promise<FloorPlanResponse> {
-
+    public static getFloorPlanByName(name: any): Promise<dbFloorRowResponse> {
         return new Promise((resolve, reject) => {
             floorplan.getPlanByName(name, (err: any, row: PlanRow | null) => {
                 if (err) {
                     reject({error: "Error fetching plan", code: 500})
-                    // res.status(500).json({ message: "Error fetching plan" });
                 } else {
                     if (row) {
                         row.data = JSON.parse(row.data.toString());
                         resolve({payload: row, code: 200})
-                        // res.status(200).json({ plan: row });
                     } else {
                         reject({error: "Plan not found", code: 404})
-                        // res.status(404).json({ message: "Plan not found" });
                     }
                 }
             });

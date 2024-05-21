@@ -12,8 +12,23 @@ export interface PlanRow {
     height: number;
 }
 
-export interface FloorPlanResponse { 
+export interface User {
+    id: string;
+    name: string;
+    email: string;
+    mac_address: string;
+    chat_id: string;
+}
+
+export interface dbFloorRowResponse { 
     payload?: PlanRow, 
     error?: string, 
     code: number 
 }
+
+export interface dbUsersResponse { 
+    payload?: User[], 
+    error?: string, 
+    code: number 
+}
+

@@ -10,6 +10,9 @@ import { exampleCntrl } from './controller/ExampleCntrl';
 import { floorplanCntrl } from './controller/FloorplanCntrl';
 import { escapeRouteCntrl } from './controller/EscapeRouteCntrl';
 import { locationProcessorCntrl } from './controller/LocationProcessorCntrl';
+import { userCntrl } from './controller/UserCntrl';
+import { emailServiceCntrl } from './controller/EmailServiceCntrl';
+import { TelegramService } from './utilities/telegramService';
 
 /**
  * Class representing the server.
@@ -64,6 +67,8 @@ export class Server {
     this.apiApp.use('/v1/example', exampleCntrl.router);
     this.apiApp.use('/v1/floorplan', floorplanCntrl.router);
     this.apiApp.use('/v1/userlocation', locationProcessorCntrl.router);
+    this.apiApp.use('/v1/users', userCntrl.router);
+    this.apiApp.use('/v1/email', emailServiceCntrl.router);
     this.apiApp.use('/v1', escapeRouteCntrl.router);
     this.apiApp.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
       if (err instanceof InputValidationError) {
@@ -84,3 +89,5 @@ api.setRouterMiddleWare();
 
 // Start the server
 api.start();
+
+TelegramService.telegramBot();
