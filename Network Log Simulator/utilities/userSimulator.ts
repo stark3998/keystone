@@ -4,8 +4,8 @@ export class UserSimulator {
 
         private static numberOfUsers: number = 150;
         // Function to generate a random MAC address
-        public static generateMacAddress(): String {
-            return Array.from({ length: 6 }, () => Math.floor(Math.random() * 256).toString(16).padStart(2, '0')).join(':');
+        public static generateMacAddress(floor: string): String {
+            return floor + Array.from({ length: 5 }, () => Math.floor(Math.random() * 256).toString(16).padStart(2, '0')).join(':');
         }
 
         // Helper function to get a random location within the floor plan
@@ -45,7 +45,7 @@ export class UserSimulator {
                 const nearestAP = this.findNearestAP({ x: randomPos.x, y: randomPos.y, nap: 0 }, floorPlan);
 
                 // Generate a new random MAC address
-                const macAddress = this.generateMacAddress().toString();
+                const macAddress = this.generateMacAddress('f' + floorPlan.name[4] + ":").toString();
 
                 // Assign the user's location with the nearest access point to the userLocations dictionary
                 this.userLocations[macAddress] = { x: randomPos.x, y: randomPos.y, nap: nearestAP.nap };

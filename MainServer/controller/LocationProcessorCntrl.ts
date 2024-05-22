@@ -38,7 +38,7 @@ class LocationProcessorCntrl {
         console.log('getUserLocation -', req.url);
         var floorname: string = req.query.name ? req.query.name.toString() : 'DBH 6th Floor';
         Floorplan.getFloorPlanByName(floorname).then((floorPlanData: dbFloorRowResponse) => {
-            console.log("calling");
+            // console.log("calling");
             res.writeHead(200, {
                 'Content-Type': 'text/plain',
                 'Transfer-Encoding': 'chunked'

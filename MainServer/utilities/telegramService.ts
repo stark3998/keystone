@@ -34,17 +34,67 @@ export class TelegramService {
             console.log(chatId);
             });
         
-            // Listener for any text message
+            // // Listener for any text message
+            // TelegramService.bot.on('message', (msg) => {
+            //     const chatId = msg.chat.id;
+            //     // bot.sendMessage(chatId, 'Received your message');
+
+            //     const imagePath = 'assets/path.png';
+  
+            //     // Send the image
+            //     TelegramService.bot.sendPhoto(chatId, fs.createReadStream(imagePath), { caption: 'Please follow this path!' });
+            //     console.log(chatId);
+            // });
+
+            let userState: 'waitingForReport' | 'waitingForDescription' = 'waitingForReport';
+
             TelegramService.bot.on('message', (msg) => {
                 const chatId = msg.chat.id;
-                // bot.sendMessage(chatId, 'Received your message');
+                const messageText = msg.text;
 
-                const imagePath = 'assets/path.png';
-  
-                // Send the image
-                TelegramService.bot.sendPhoto(chatId, fs.createReadStream(imagePath), { caption: 'Please follow this path!' });
-                console.log(chatId);
+                // Check the current state of the conversation
+                if (userState === 'waitingForReport') {
+                    // Check if the message text is "/report"
+                    if (messageText === '/report') {
+                        // Update state to indicate that we are waiting for the description
+                        userState = 'waitingForDescription';
+                        // Send a message asking the user to describe the emergency
+                        TelegramService.bot.sendMessage(chatId, 'Please describe the emergency.');
+                    } else {
+                        // Handle other messages
+                        TelegramService.bot.sendMessage(chatId, 'No emergency detected. If you want to report an emergency, please type /report.');
+                    }
+                } else if (userState === 'waitingForDescription') {
+                    // This message is the description of the emergency
+                    // Now you can process the description and reply with an affirmation
+                    // For example, you can simply acknowledge the description
+                    TelegramService.bot.sendMessage(chatId, 'Thank you for reporting the emergency. Please await further instructions.');
+                    // Reset the state for future messages
+                    userState = 'waitingForReport';
+                }
             });
+
+            // Command to start the process
+            // TelegramService.bot.onText(/\/report/, (msg) => {
+            //     const chatId = msg.chat.id;
+            //     TelegramService.bot.sendMessage(chatId, 'An emergency has been reported. Please await further instructions.');
+            // });
+
+            // TelegramService.bot.on('message', (msg) => {
+
+            //     if (msg.caption != '/report'){
+            //         console.log(msg.caption);
+            //         const chatId = msg.chat.id;
+            //         TelegramService.bot.sendMessage(chatId, 'No emergency detected. If you want to report an emergency, please type /report.');
+            //     }
+                
+            //     // const imagePath = 'assets/path.png';
+  
+            //     // // Send the image
+            //     // TelegramService.bot.sendPhoto(chatId, fs.createReadStream(imagePath), { caption: 'Please follow this path!' });
+            //     // console.log(chatId);
+            // });
+
 
     }
 

@@ -1,6 +1,8 @@
 import express from 'express';
 import { Validator } from '../support/validator';
 import TelegramBot from 'node-telegram-bot-api';
+import { TelegramService } from '../utilities/telegramService';
+import { UserService } from '../utilities/userService';
 
 class EmailServiceCntrl {
     public router: express.Router = express.Router();
@@ -20,8 +22,8 @@ class EmailServiceCntrl {
     * @returns void
     */
     public static setRouterMiddleWare(router: express.Router): void {
-        router.route('/logs')
-            .get(Validator.validate, EmailServiceCntrl.example);
+        router.route('/sendPath')
+            .get(Validator.validate, EmailServiceCntrl.sendMessage);
     }
 
     /**
@@ -34,6 +36,21 @@ class EmailServiceCntrl {
     public static example(req: express.Request, res: express.Response): void {
             console.log('example -', req.url);
     }
+
+    public static sendMessage(req: express.Request, res: express.Response): void {
+        console.log('sendMessage -', req.url);
+        UserService.getAllUsers().then(ress => {
+            ress.payload!.forEach(user => {
+                TelegramService.sendMessage(user.chat_id).catch(err => res.status(500).send({error: "Cannot send message"}));
+                console.log(`ID: ${user.id}, Name: ${user.name}, Email: ${user.email}, chat_id: ${user.chat_id}`);
+            });
+            res.status(200).send("Messages sent successfully!");
+
+        })
+        .catch(err => res.status(err.status).send(err));
+    }
+
+    
 
 }
 
