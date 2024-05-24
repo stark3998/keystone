@@ -42,30 +42,20 @@ def get_table_desc(table_name):
         print(row)
 
 def create_table(table_name):
-    # Create table as per requirement
-    # if random_users:
-    #     username = generate_random_name()
-    #     sql = f'''
-    #     CREATE TABLE {table_name} (
-    #         id INTEGER PRIMARY KEY AUTOINCREMENT,
-    #         name TEXT DEFAULY '{username}',
-    #         email TEXT DEFAULY '{username.replace(" ","").lower()}@gmail.com',
-    #         chat_id TEXT DEFAULY '{random.randint(1000000000, 9999999999)}',
-    #         mac_Address TEXT DEFAULY '{':'.join(['%02x' % random.randint(0, 255) for _ in range(6)])}'
-    #     )
-    #     '''
-    # else:
     sql = f'''
     CREATE TABLE {table_name} (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT DEFAULY 'John Doe',
         email TEXT DEFAULY 'johndoe@uci.edu',
         chat_id TEXT DEFAULY '1234567890',
-        mac_Address TEXT DEFAULY '00:00:00:00:00:00'
+        mac_address TEXT DEFAULY '00:00:00:00:00:00'
     )
     '''
 
     cursor.execute(sql)
+
+def rename_column(table_name, old_column_name, new_column_name):
+    cursor.execute(f"ALTER TABLE {table_name} RENAME COLUMN {old_column_name} TO {new_column_name}")
 
 def insert_users(table_name, n):
     for _ in range(n):
@@ -75,7 +65,7 @@ def insert_users(table_name, n):
         mac_address = ':'.join(['%02x' % random.randint(0, 255) for _ in range(6)])
 
         sql = f'''
-        INSERT INTO {table_name} (name, email, chat_id, mac_Address)
+        INSERT INTO {table_name} (name, email, chat_id, mac_address)
         VALUES ('{username}', '{email}', '{chat_id}', '{mac_address}')
         '''
 
@@ -98,7 +88,9 @@ if __name__ == '__main__':
     # get_table_desc('users_random')
 
     # insert_users('users_random', 150)
-    get_users('users_random')
+    # get_users('users_random')
+    # rename_column('users_random', 'mac_Address', 'mac_address')
+    get_table_desc('users_random')
 
     conn.commit()
     conn.close()

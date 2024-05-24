@@ -1,7 +1,11 @@
+import { th } from "@faker-js/faker";
+import { FloorPlan } from "../external/floorPlan";
 export class UserSimulator {
     // Dictionary to store user mac addresses and their corresponding metadata
-    private static userLocations: { [macAddress: string]: { x: number, y: number, nap: number, name: string, email: string, chat_id: string } } = {};
+    private static user_floor_locations: { [floor_id: number]: [{ x: number, y: number, nap: number, name: string, email: string, chat_id: string, mac_address: string }] } = {};
+    private static user_dict: { [mac_address: string]: { x: number, y: number, nap: number, name: string, email: string, chat_id: string, mac_address: string } } = {};
     private static users_api = 'http://localhost:4000/v1/users';
+    private static num_floors = 0;
 
     // private static numberOfUsers: number = 150;
     // Function to generate a random MAC address
@@ -36,33 +40,62 @@ export class UserSimulator {
 
     private static add_user_to_db(user: { id: number, name: string, email: string, mac_address: string, chat_id: string }, floorPlan: any) {
         const { id, name, email, mac_address, chat_id } = user;
-        console.log(`User: ${name}, MAC Address: ${mac_address}, Email: ${email}, Chat ID: ${chat_id}`);
+        console.log("User: ", user);
+        // console.log(`User: ${name}, MAC Address: ${mac_address}, Email: ${email}, Chat ID: ${chat_id}`);
         var randomPos = this.getRandomLocation(floorPlan);
         const nearestAP = this.findNearestAP({ x: randomPos.x, y: randomPos.y, nap: 0 }, floorPlan);
-        this.userLocations[mac_address] = { x: randomPos.x, y: randomPos.y, nap: nearestAP.nap, name: name, email: email, chat_id: chat_id };
+        console.log("Mac Address: ", mac_address);
+        this.user_dict[mac_address] = { x: randomPos.x, y: randomPos.y, nap: nearestAP.nap, name: name, email: email, chat_id: chat_id, mac_address: mac_address };
     }
 
     public static initializeUsers(floorPlan: any) {
         // Clear the userLocations dictionary
-        this.userLocations = {};
-        // Generate a random number between 70 and 120
-        var randomNumber = Math.floor(Math.random() * (51)) + 70;
-        console.log("Generating " + randomNumber + " users");
-        const randomNumbers: number[] = Array.from({ length: randomNumber }, () => Math.floor(Math.random() * 150) + 1);
-        console.log("Random Numbers: ", randomNumbers);
+        this.user_floor_locations = {};
+        this.user_dict = {};
+
         // Make an API call to retrieve the list of users
         fetch(this.users_api)
             .then(response => response.json())
             .then(data => {
-                var users = data.payload.primary_users;
-                users.forEach((user: { id: number, name: string, email: string, mac_address: string, chat_id: string }) => {
+                var primary_users = data.payload.primary_users;
+                var secondary_users = data.payload.secondary_users;
+                console.log("Primary Users: ", primary_users.length);
+                primary_users.forEach((user: { id: number, name: string, email: string, mac_address: string, chat_id: string }) => {
+                    console.log("User: ", user);
                     this.add_user_to_db(user, floorPlan);
                 });
-                var users = data.payload.secondary_users;
 
-                randomNumbers.forEach((user_no: number) => {
-                    var user: { id: number, name: string, email: string, mac_address: string, chat_id: string } = users[user_no];
+                console.log("Secondary Users: ", secondary_users.length);
+                secondary_users.forEach((user: { id: number, name: string, email: string, mac_address: string, chat_id: string }) => {
                     this.add_user_to_db(user, floorPlan);
+                });
+                var floor_ids: number[] = [];
+                console.log("User Dict: ", Object.keys(this.user_dict).length);
+
+                FloorPlan.getAllFloorPlans().then((floorPlan: any) => {
+                    console.log("Floor Plan Count: ", floorPlan.plans.length);
+                    this.num_floors = floorPlan.plans.length;
+                    floorPlan.plans.forEach((floor: any) => {
+                        floor_ids.push(floor.id);
+                    });
+
+                    secondary_users.forEach((user: { id: number, name: string, email: string, mac_address: string, chat_id: string }) => {
+                        var randomNumber = Math.floor(Math.random() * (this.num_floors + 1));
+                        if (this.user_floor_locations[floor_ids[randomNumber]] == undefined) {
+                            this.user_floor_locations[floor_ids[randomNumber]] = [this.user_dict[user.mac_address]];
+                        }
+                        else {
+                            this.user_floor_locations[floor_ids[randomNumber]].push(this.user_dict[user.mac_address]);
+                        }
+                    });
+                    floor_ids.forEach((floor_id: number) => {
+                        primary_users.forEach((user: { id: number, name: string, email: string, mac_address: string, chat_id: string }) => {
+                            this.user_floor_locations[floor_id].push(this.user_dict[user.mac_address]);
+                            console.log("User: ", user);
+                        });
+                        console.log(`Floor ID: ${floor_id}, Users Count : ${Object.keys(this.user_floor_locations[floor_id]).length}`);
+                    });
+                    console.log("User Floor Locations: ", this.user_floor_locations);
                 });
             })
             .catch(error => {
@@ -74,7 +107,7 @@ export class UserSimulator {
 
     // Update user location
     private static updateUserPosition(macAddress: string, floorPlan: any): { x: number, y: number } {
-        const userLocation = this.userLocations[macAddress];
+        const userLocation = this.user_dict[macAddress];
         const possibleLocations = [
             { x: userLocation.x + 1, y: userLocation.y },
             { x: userLocation.x - 1, y: userLocation.y },
@@ -99,29 +132,15 @@ export class UserSimulator {
         return updatedLocation;
     }
 
-    public static getUserDatabase(floorPlan: any): { x: number, y: number, nap: number, signalStrength: number, macAddress: String }[] {
-
-
-        var users = []
-        for (let i = 0; i < this.numberOfUsers; i++) {
-            var randomUser = Object.keys(this.userLocations)[i];
-            var randomPos = this.updateUserPosition(randomUser, floorPlan);
-            const nearestAP = this.findNearestAP({ x: randomPos.x, y: randomPos.y, nap: 0 }, floorPlan);
-            const signalStrength = this.calculateSignalStrength(randomPos, nearestAP.pos)
-            this.userLocations[randomUser] = { x: randomPos.x, y: randomPos.y, nap: nearestAP.nap };
-            users.push({ x: randomPos.x, y: randomPos.y, nap: nearestAP.nap, signalStrength: signalStrength, macAddress: randomUser })
-        }
-        return users
-    }
-
     public static updateUserlocation(floorPlan: any): { x: number, y: number, nap: number, signalStrength: number, macAddress: String } {
-        var randomUser = Object.keys(this.userLocations)[Math.floor(Math.random() * this.numberOfUsers)];
+        var randomUser = Object.keys(this.user_floor_locations[floorPlan.id])[Math.floor(Math.random() * this.user_floor_locations[floorPlan.id].length)];
+        console.log("Random User : ", randomUser);
         var randomPos = this.updateUserPosition(randomUser, floorPlan);
 
         const nearestAP = this.findNearestAP({ x: randomPos.x, y: randomPos.y, nap: 0 }, floorPlan);
 
         const signalStrength = this.calculateSignalStrength(randomPos, nearestAP.pos)
-        this.userLocations[randomUser] = { x: randomPos.x, y: randomPos.y, nap: nearestAP.nap };
+        this.user_floor_locations[floorPlan.id][randomUser] = { x: randomPos.x, y: randomPos.y, nap: nearestAP.nap };
 
         return { x: randomPos.x, y: randomPos.y, nap: nearestAP.nap, signalStrength: signalStrength, macAddress: randomUser }
 
