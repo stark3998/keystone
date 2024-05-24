@@ -133,16 +133,22 @@ export class UserSimulator {
     }
 
     public static updateUserlocation(floorPlan: any): { x: number, y: number, nap: number, signalStrength: number, macAddress: String } {
-        var randomUser = Object.keys(this.user_floor_locations[floorPlan.id])[Math.floor(Math.random() * this.user_floor_locations[floorPlan.id].length)];
-        console.log("Random User : ", randomUser);
-        var randomPos = this.updateUserPosition(randomUser, floorPlan);
+        var floor_obj = this.user_floor_locations[floorPlan.id];
+        var random_user_id = Math.floor(Math.random() * this.user_floor_locations[floorPlan.id].length);
+        var random_user_obj = Object(floor_obj)[random_user_id];
+        var updated_pos = this.updateUserPosition(random_user_obj.mac_address, floorPlan);
+        console.log("Old User: ", this.user_floor_locations[floorPlan.id][random_user_id]);
+        random_user_obj.x = updated_pos.x;
+        random_user_obj.y = updated_pos.y;
 
-        const nearestAP = this.findNearestAP({ x: randomPos.x, y: randomPos.y, nap: 0 }, floorPlan);
+        const nearestAP = this.findNearestAP({ x: updated_pos.x, y: updated_pos.y, nap: 0 }, floorPlan);
 
-        const signalStrength = this.calculateSignalStrength(randomPos, nearestAP.pos)
-        this.user_floor_locations[floorPlan.id][randomUser] = { x: randomPos.x, y: randomPos.y, nap: nearestAP.nap };
-
-        return { x: randomPos.x, y: randomPos.y, nap: nearestAP.nap, signalStrength: signalStrength, macAddress: randomUser }
+        const signalStrength = this.calculateSignalStrength(updated_pos, nearestAP.pos)
+        random_user_obj.nap = nearestAP.nap;
+        this.user_floor_locations[floorPlan.id][random_user_id] = random_user_obj;
+        this.user_dict[random_user_obj.mac_address] = random_user_obj;
+        console.log("Updated User: ", this.user_floor_locations[floorPlan.id][random_user_id]);
+        return random_user_obj;
 
     }
 
