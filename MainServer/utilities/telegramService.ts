@@ -9,7 +9,7 @@ export class TelegramService {
     public static telegramBot() {
 
         TelegramService.bot.on('polling_error', (msg) => {
-            console.log(msg);
+            // console.log(msg);
         });
 
         TelegramService.bot.onText(/\/start/, (msg) => {
@@ -37,7 +37,7 @@ export class TelegramService {
         var userState: 'waitingForReport' | 'waitingForDescription' = 'waitingForReport';
 
         TelegramService.bot.on('message', (msg) => {
-            console.log(msg);
+            // console.log(msg);
             if (msg.voice) {
                 const fileId = msg.voice.file_id;
                 TelegramService.bot.getFileLink(fileId).then(link => {

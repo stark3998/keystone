@@ -16,8 +16,8 @@ export interface User {
     id: string;
     name: string;
     email: string;
-    mac_address: string;
     chat_id: string;
+    mac_address: string;
 }
 
 export interface dbFloorRowResponse { 
@@ -27,7 +27,10 @@ export interface dbFloorRowResponse {
 }
 
 export interface dbUsersResponse { 
-    payload?: User[], 
+    payload?: {
+        primary_users: User[], 
+        secondary_users: User[], 
+    }
     error?: string, 
     code: number 
 }

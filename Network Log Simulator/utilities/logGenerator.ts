@@ -1,6 +1,5 @@
 import { faker } from '@faker-js/faker'
 import { log, logResponse } from '../support/interfaces'
-import { FloorPlan } from '../external/floorPlan';
 import { UserSimulator } from './userSimulator';
 
 export class LogGenerator {
@@ -21,19 +20,6 @@ export class LogGenerator {
         return Array.from({ length: 6 }, () => Math.floor(Math.random() * 256).toString(16).padStart(2, '0')).join(':');
     }
 
-    // Generate 150 random mac addresses
-    private static generateRandomMacAddresses(): void {
-      for (let i = 0; i < 150; i++) {
-          this.generatedMacAddresses.push(this.generateMacAddress());
-      }
-    }
-
-    // Get a random mac address from the generated list
-    private static getRandomMacAddress(): String {
-      const index = Math.floor(Math.random() * this.generatedMacAddresses.length);
-      // console.log(this.generatedMacAddresses.splice(index, 1)[0])
-      return this.generatedMacAddresses[index];
-    }
 
     // Function to generate a random RSSI value
     public static generateRssi(): number {
@@ -45,33 +31,13 @@ export class LogGenerator {
         return Math.floor(Math.random() * (1000000 - 1000) + 1000);
     }
 
-    // public static getNetworkLogs(): Promise<logResponse> {
-    //   return new Promise((resolve, reject) => {
-    //     FloorPlan.getFloorPlan().then(floorPlanData => {
-    //       this.generateWifiAccessPointLogs(floorPlanData.plan).then(response => {
-    //           // console.log('Generated Log:', response.log);
-    //           return resolve(response);
-    //       }).catch(error => {
-    //           console.error('Error generating log:', error);
-    //           return reject({"statusCode": 500, "log": undefined});
-    //       });
-    //     })
-    //     .catch(err => {
-    //       console.log(err);
-    //       return reject({"statusCode": 500, "log": undefined});
-    //     });
-    //   })
-       
-      
-    // }
-
     public static initializeUsers(floorPlan: any){
       UserSimulator.initializeUsers(floorPlan);
     }
 
     // Generate a list of fake WiFi access point logs
     public static generateWifiAccessPointLogs(floorPlan: any): Promise<logResponse> {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             // List of possible device statuses
         var deviceStatuses: String[] = ['Connected', 'Failed'];
 
@@ -79,7 +45,6 @@ export class LogGenerator {
         var operatingSystems: String[] = ['Windows', 'macOS', 'Linux', 'Android', 'iOS'];
 
         // List of possible access points
-        var accessPoints: String[] = ['AP1', 'AP2', 'AP3'];
 
         // List of possible SSIDs
         var ssids: String[] = ['HomeNetwork', 'OfficeWiFi', 'PublicHotspot'];
@@ -93,7 +58,6 @@ export class LogGenerator {
         // Generate or update user location
         const location = UserSimulator.updateUserlocation(floorPlan);
 
-        const logs = [];
           var logEntry: log = {
             'Device Status': deviceStatuses[Math.floor(Math.random() * deviceStatuses.length)],
             'Name': faker.person.fullName(),
@@ -119,23 +83,6 @@ export class LogGenerator {
         })
       }
 
-      // Generate or update user location
-      private static generateOrUpdateUserLocation(floorPlan: any, macAddress: string): { x: number, y: number } {
-        const existingMacAddresses = Object.keys(this.userLocations);
-        let location: { x: number, y: number };
-
-        // Check if the mac address already exists
-        if (existingMacAddresses.includes(macAddress)) {
-            // Update existing user location
-            location = this.updateUserLocation(macAddress, floorPlan);
-        } else {
-            // Generate new user location
-            location = this.getRandomLocation(floorPlan);
-            this.userLocations[macAddress] = location;
-        }
-
-        return location;
-    }
 
     // Update user location
     private static updateUserLocation(macAddress: string, floorPlan: any): { x: number, y: number } {
