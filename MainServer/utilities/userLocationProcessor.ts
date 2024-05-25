@@ -8,13 +8,13 @@ export class UserLocationProcessor {
      * @param floorPlan The floor plan data.
      * @returns Object containing the MAC Address and the random location within the signal radius.
      */
-    public static processUserLocation(chunk: any, floorPlan: PlanRow): { 'MAC Address': string, Location: { x: number, y: number } } {
+    public static processUserLocation(chunk: any, floorPlan: PlanRow): { 'MAC Address': string, Location: { x: number, y: number }, 'Device Status': string, 'Name': string, 'User Name': string, 'IP Address': string, 'OS': string, 'Associated SSID': string } {
         // console.log(chunk);
         const apNumber = parseInt(chunk['Associated Access Point'].substr(2), 10);
         const position = this.findAP(apNumber, floorPlan).pos;
         const radius = this.calculateSignalStrength(chunk['RSSI (dBm)']);
         const randomLocation = this.pickRandomPoint(this.generatePointsOnCircle(position.x, position.y, radius, floorPlan));
-        return { 'MAC Address': chunk['MAC Address'], Location: randomLocation };
+        return { 'MAC Address': chunk['MAC Address'], Location: randomLocation, 'Device Status': chunk['Device Status'], 'Name': chunk['Name'], 'User Name': chunk['User Name'], 'IP Address': chunk['IP Address'], 'OS': chunk['OS'], 'Associated SSID': chunk['Associated SSID']};
     }
 
     /**
@@ -29,7 +29,6 @@ export class UserLocationProcessor {
         
         // Calculate the distance from the access point to the user based on the signal strength
         const distance = (maxDistance * (maxSignalStrength - signalStrength)) / maxSignalStrength;
-        
         return distance;
     }
 
@@ -50,7 +49,7 @@ export class UserLocationProcessor {
             const y = y_center + radius * Math.sin(theta);
     
             // Ensure x and y are within bounds
-            if (x >= 0 && x < floorPlan.width && y >= 0 && y < floorPlan.height && !this.isLocationBlocked({x: x, y: y}, floorPlan)) {
+            if (!this.isLocationBlocked({x: x, y: y}, floorPlan)) {
                 points.push({ x: Math.ceil(x), y: Math.ceil(y) });
             }
         }
@@ -59,7 +58,7 @@ export class UserLocationProcessor {
         if (points.length === 0) {
             points.push({ x: 0, y: 0 });
         }
-    
+        // console.log(points);
         return points;
     }
 
