@@ -23,7 +23,7 @@ class EmailServiceCntrl {
     */
     public static setRouterMiddleWare(router: express.Router): void {
         router.route('/sendPath')
-            .get(Validator.validate, EmailServiceCntrl.sendMessage);
+            .post(Validator.validate, EmailServiceCntrl.sendMessage);
     }
 
     /**
