@@ -60,9 +60,9 @@ export class LogGenerator {
 
           var logEntry: log = {
             'Device Status': deviceStatuses[Math.floor(Math.random() * deviceStatuses.length)],
-            'Name': faker.person.fullName(),
-            'User Name': faker.internet.userName(),
-            'MAC Address': location.macAddress,
+            'Name': location.name,
+            'User Name': location.name.replace(/\s/g, '').toLowerCase(),
+            'MAC Address': location.mac_address,
             'IP Address': faker.internet.ip(),
             'OS': operatingSystems[Math.floor(Math.random() * operatingSystems.length)],
             'Associated Access Point': 'AP' + location.nap.toString(),

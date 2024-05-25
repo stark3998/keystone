@@ -59,13 +59,12 @@ export class UserSimulator {
             .then(data => {
                 var primary_users = data.payload.primary_users;
                 var secondary_users = data.payload.secondary_users;
-                console.log("Primary Users: ", primary_users.length);
+                // console.log("Primary Users: ", primary_users.length);
                 primary_users.forEach((user: { id: number, name: string, email: string, mac_address: string, chat_id: string }) => {
-                    console.log("User: ", user);
                     this.add_user_to_db(user, floorPlan);
                 });
 
-                console.log("Secondary Users: ", secondary_users.length);
+                // console.log("Secondary Users: ", secondary_users.length);
                 secondary_users.forEach((user: { id: number, name: string, email: string, mac_address: string, chat_id: string }) => {
                     this.add_user_to_db(user, floorPlan);
                 });
@@ -91,11 +90,11 @@ export class UserSimulator {
                     floor_ids.forEach((floor_id: number) => {
                         primary_users.forEach((user: { id: number, name: string, email: string, mac_address: string, chat_id: string }) => {
                             this.user_floor_locations[floor_id].push(this.user_dict[user.mac_address]);
-                            console.log("User: ", user);
+                            // console.log("User: ", user);
                         });
                         console.log(`Floor ID: ${floor_id}, Users Count : ${Object.keys(this.user_floor_locations[floor_id]).length}`);
                     });
-                    console.log("User Floor Locations: ", this.user_floor_locations);
+                    // console.log("User Floor Locations: ", this.user_floor_locations);
                 });
             })
             .catch(error => {
@@ -132,22 +131,23 @@ export class UserSimulator {
         return updatedLocation;
     }
 
-    public static updateUserlocation(floorPlan: any): { x: number, y: number, nap: number, signalStrength: number, macAddress: String } {
+    public static updateUserlocation(floorPlan: any): { x: number, y: number, nap: number, signalStrength: number, mac_address: String, name: String, email: String, chat_id: String} {
         var floor_obj = this.user_floor_locations[floorPlan.id];
         var random_user_id = Math.floor(Math.random() * this.user_floor_locations[floorPlan.id].length);
         var random_user_obj = Object(floor_obj)[random_user_id];
         var updated_pos = this.updateUserPosition(random_user_obj.mac_address, floorPlan);
-        console.log("Old User: ", this.user_floor_locations[floorPlan.id][random_user_id]);
+        // console.log("Old User: ", this.user_floor_locations[floorPlan.id][random_user_id]);
         random_user_obj.x = updated_pos.x;
         random_user_obj.y = updated_pos.y;
 
         const nearestAP = this.findNearestAP({ x: updated_pos.x, y: updated_pos.y, nap: 0 }, floorPlan);
 
         const signalStrength = this.calculateSignalStrength(updated_pos, nearestAP.pos)
+        random_user_obj.signalStrength = signalStrength;
         random_user_obj.nap = nearestAP.nap;
         this.user_floor_locations[floorPlan.id][random_user_id] = random_user_obj;
         this.user_dict[random_user_obj.mac_address] = random_user_obj;
-        console.log("Updated User: ", this.user_floor_locations[floorPlan.id][random_user_id]);
+        // console.log("Updated User: ", this.user_floor_locations[floorPlan.id][random_user_id]);
         return random_user_obj;
 
     }
