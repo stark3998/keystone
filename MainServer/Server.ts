@@ -12,7 +12,9 @@ import { escapeRouteCntrl } from './controller/EscapeRouteCntrl';
 import { locationProcessorCntrl } from './controller/LocationProcessorCntrl';
 import { userCntrl } from './controller/UserCntrl';
 import { emailServiceCntrl } from './controller/EmailServiceCntrl';
-import { TelegramService } from './utilities/telegramService';
+
+import { Server as WebSocketServer } from 'ws';
+import { TriggerCntrl } from './controller/TriggerCntrl';
 
 /**
  * Class representing the server.
@@ -21,6 +23,8 @@ export class Server {
 
   private apiApp: express.Express;
   private port: number;
+
+  public static wss: WebSocketServer;
 
   /**
    * Constructor for the Server class.
@@ -40,6 +44,7 @@ export class Server {
     const server: http.Server = this.apiApp.listen(this.port, () => {
       console.log(`------------API Web Server Starting on port ${this.port} -------------`);
     });
+    Server.wss = new WebSocketServer({ server });
   }
 
   /**
@@ -63,12 +68,18 @@ export class Server {
    * Set up router middleware for the server.
    * @returns void
    */
-  public setRouterMiddleWare(): void {
+  public setRouterMiddleWare(
+
+  ): void {
+
+    var triggerCntrl = new TriggerCntrl(Server.wss);
+
     this.apiApp.use('/v1/example', exampleCntrl.router);
     this.apiApp.use('/v1/floorplan', floorplanCntrl.router);
     this.apiApp.use('/v1/userlocation', locationProcessorCntrl.router);
     this.apiApp.use('/v1/users', userCntrl.router);
     this.apiApp.use('/v1/email', emailServiceCntrl.router);
+    this.apiApp.use('/v1/trigger', triggerCntrl.router);
     this.apiApp.use('/v1', escapeRouteCntrl.router);
     this.apiApp.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
       if (err instanceof InputValidationError) {
@@ -90,4 +101,4 @@ api.setRouterMiddleWare();
 // Start the server
 api.start();
 
-TelegramService.telegramBot();
+// TelegramService.telegramBot();

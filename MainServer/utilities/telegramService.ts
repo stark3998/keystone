@@ -2,6 +2,7 @@ import TelegramBot from 'node-telegram-bot-api';
 import fs from 'fs';
 import { keys } from '../support/keys';
 import { GunShotDetector } from '../external/gunShotDetector';
+import { WebSocketService } from './webSocketService';
 
 export class TelegramService {
     public static bot = new TelegramBot(keys.telegram, { polling: true });
