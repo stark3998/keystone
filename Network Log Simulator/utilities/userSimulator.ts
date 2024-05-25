@@ -109,10 +109,10 @@ export class UserSimulator {
     private static updateUserPosition(macAddress: string, floorPlan: any): { x: number, y: number } {
         const userLocation = this.user_dict[macAddress];
         const possibleLocations = [
-            { x: userLocation.x + 1, y: userLocation.y },
-            { x: userLocation.x - 1, y: userLocation.y },
-            { x: userLocation.x, y: userLocation.y + 1 },
-            { x: userLocation.x, y: userLocation.y - 1 },
+            { x: userLocation.x + 3, y: userLocation.y },
+            { x: userLocation.x - 3, y: userLocation.y },
+            { x: userLocation.x, y: userLocation.y + 3 },
+            { x: userLocation.x, y: userLocation.y - 3 },
             { x: userLocation.x, y: userLocation.y }
 
         ];
