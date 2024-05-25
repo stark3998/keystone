@@ -1,10 +1,11 @@
 import { th } from "@faker-js/faker";
 import { FloorPlan } from "../external/floorPlan";
+import { urls } from "../support/urls";
+
 export class UserSimulator {
     // Dictionary to store user mac addresses and their corresponding metadata
     private static user_floor_locations: { [floor_id: number]: [{ x: number, y: number, nap: number, name: string, email: string, chat_id: string, mac_address: string }] } = {};
     private static user_dict: { [mac_address: string]: { x: number, y: number, nap: number, name: string, email: string, chat_id: string, mac_address: string } } = {};
-    private static users_api = 'http://localhost:4000/v1/users';
     private static num_floors = 0;
 
     // private static numberOfUsers: number = 150;
@@ -54,7 +55,7 @@ export class UserSimulator {
         this.user_dict = {};
 
         // Make an API call to retrieve the list of users
-        fetch(this.users_api)
+        fetch(urls.main_server + urls.users_api)
             .then(response => response.json())
             .then(data => {
                 var primary_users = data.payload.primary_users;
@@ -102,7 +103,6 @@ export class UserSimulator {
                 console.error('Error retrieving users:', error);
             });
     }
-
 
     // Update user location
     private static updateUserPosition(macAddress: string, floorPlan: any): { x: number, y: number } {
@@ -191,7 +191,6 @@ export class UserSimulator {
 
         return signalStrength;
     }
-
 
     private static calculateEuclideanDistance(p1: { x: number, y: number }, p2: { x: number, y: number }): number {
         const dx = p1.x - p2.x;
