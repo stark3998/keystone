@@ -13,6 +13,7 @@
   "author": "Vaishnavi Desai",
   "license": "ISC",
   "dependencies": {
+    "@types/ws": "^8.5.10",
     "axios": "^1.6.8",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
@@ -21,7 +22,8 @@
     "nodemailer": "^6.9.13",
     "openapi-validator-middleware": "^3.2.6",
     "sqlite3": "^5.1.7",
-    "typescript": "^5.4.5"
+    "typescript": "^5.4.5",
+    "ws": "^8.17.0"
   },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.7",

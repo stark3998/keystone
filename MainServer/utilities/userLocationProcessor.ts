@@ -13,7 +13,7 @@ export class UserLocationProcessor {
         const apNumber = parseInt(chunk['Associated Access Point'].substr(2), 10);
         const position = this.findAP(apNumber, floorPlan).pos;
         const radius = this.calculateSignalStrength(chunk['RSSI (dBm)']);
-        const randomLocation = this.pickRandomPoint(this.generatePointsOnCircle(position.x, position.y, radius, floorPlan.width, floorPlan.height));
+        const randomLocation = this.pickRandomPoint(this.generatePointsOnCircle(position.x, position.y, radius, floorPlan));
         return { 'MAC Address': chunk['MAC Address'], Location: randomLocation };
     }
 
@@ -42,7 +42,7 @@ export class UserLocationProcessor {
      * @param height The height of the floor plan.
      * @returns Array of points on the circumference of the circle.
      */
-    private static generatePointsOnCircle(x_center: number, y_center: number, radius: number, width: number, height: number): { x: number, y: number }[] {
+    private static generatePointsOnCircle(x_center: number, y_center: number, radius: number, floorPlan: any): { x: number, y: number }[] {
         const points: { x: number, y: number }[] = [];
     
         for (let theta = 0; theta <= 2 * Math.PI; theta += (1 / radius)) {
@@ -50,7 +50,7 @@ export class UserLocationProcessor {
             const y = y_center + radius * Math.sin(theta);
     
             // Ensure x and y are within bounds
-            if (x >= 0 && x < width && y >= 0 && y < height) {
+            if (x >= 0 && x < floorPlan.width && y >= 0 && y < floorPlan.height && !this.isLocationBlocked({x: x, y: y}, floorPlan)) {
                 points.push({ x: Math.ceil(x), y: Math.ceil(y) });
             }
         }
@@ -61,6 +61,14 @@ export class UserLocationProcessor {
         }
     
         return points;
+    }
+
+    private static isLocationBlocked(location: { x: number, y: number }, floorPlan: any): boolean {
+        // console.log(floorPlan.data.blocked, "Hii");
+        // var block = JSON.parse(floorPlan.data);
+        return floorPlan.data.blocked.some((blockedLocation: any) => {
+            return ((blockedLocation.x === location.x && blockedLocation.y === location.y) || location.x < 0 || location.x >= floorPlan.width || location.y < 0 || location.y >= floorPlan.height);
+        });
     }
 
     /**

@@ -17,7 +17,7 @@ export class UserLocation {
      * @returns A Promise resolving to the response data.
      */
     public static getUserLocation(floorname: string, processLocation: (parsed: any, res: express.Response, floorPlanData: PlanRow) => void, resp: express.Response, floorPlan: PlanRow): Promise<any> {
-        console.log("In getUserLocation");
+        // console.log("In getUserLocation");
         return new Promise((resolve, reject) => {
             axios.get('http://localhost:5001/v1/logs/logs?name=' + floorname, { responseType: 'stream' }).then(response => {
 
