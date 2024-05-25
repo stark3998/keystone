@@ -18,6 +18,7 @@ export interface User {
     email: string;
     chat_id: string;
     mac_address: string;
+    os_type: string;
 }
 
 export interface dbFloorRowResponse { 

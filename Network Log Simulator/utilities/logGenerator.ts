@@ -36,15 +36,16 @@ export class LogGenerator {
       var deviceStatuses: String[] = ['Connected', 'Failed'];
 
       // List of possible operating systems
-      var operatingSystems: String[] = ['Windows', 'macOS', 'Linux', 'Android', 'iOS'];
+      // var operatingSystems: String[] = ['Windows', 'macOS', 'Linux', 'Android', 'iOS'];
 
       // List of possible access points
 
       // List of possible SSIDs
-      var ssids: String[] = ['HomeNetwork', 'OfficeWiFi', 'PublicHotspot'];
+      // var ssids: String[] = ['HomeNetwork', 'OfficeWiFi', 'PublicHotspot'];
 
       // Generate or update user location
       const location = UserSimulator.updateUserlocation(floorPlan);
+      // console.log("Location : ", location);
 
       var logEntry: log = {
         'Device Status': deviceStatuses[Math.floor(Math.random() * deviceStatuses.length)],
@@ -52,9 +53,9 @@ export class LogGenerator {
         'User Name': location.name.replace(/\s/g, '').toLowerCase(),
         'MAC Address': location.mac_address,
         'IP Address': faker.internet.ip(),
-        'OS': operatingSystems[Math.floor(Math.random() * operatingSystems.length)],
+        'OS': location.os_type,
         'Associated Access Point': 'AP' + location.nap.toString(),
-        'Associated SSID': ssids[Math.floor(Math.random() * ssids.length)],
+        'Associated SSID': floorPlan.name,
         'RSSI (dBm)': location.signalStrength,
         'Best RSSI (dBm)': location.signalStrength,
         'Uplink Data': this.generateDataTransferAmount(),
@@ -66,7 +67,7 @@ export class LogGenerator {
         'Sticky': Math.random() < 0.5,
         'Tag': faker.word.words(5),
       };
-      //   console.log(logEntry);
+      // console.log(logEntry);
       return resolve({ "statusCode": 200, "log": logEntry });
     })
   }

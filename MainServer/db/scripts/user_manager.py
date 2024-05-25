@@ -269,6 +269,14 @@ def insert_users(table_name, n):
 
         cursor.execute(sql)
 
+def insert_user(table_name, name, email, chat_id, mac_address, os_type):
+    sql = f"""
+    INSERT INTO {table_name} (name, email, chat_id, mac_address, os_type)
+    VALUES ('{name}', '{email}', '{chat_id}', '{mac_address}', '{os_type}')
+    """
+
+    cursor.execute(sql)
+
 
 def get_users(table_name):
     cursor.execute(f"SELECT * FROM {table_name}")
@@ -292,12 +300,15 @@ if __name__ == "__main__":
     # insert_users('users_random', 150)
     # get_users('users_random')
     # rename_column('users_random', 'mac_Address', 'mac_address')
-    get_table_desc('users_random')
-    # drop_table("users_random")
-    # create_table("users_random")
-    # insert_users("users_random", 350)
-    # get_users("users_random")
-    
+    # get_table_desc('users')
+    # drop_table("users")
+    # create_table("users")
+    # insert_users("users", 350)
+    insert_user("users", "Jatin Madan", "madanj@uci.edu", "1161057898", "e6:8a:39:51:87:f1", "MacOS")
+    insert_user("users", "Vaishnavi Desai", "desaivs@uci.edu", "7017630724", "e4:d3:7a:49:bb:4a", "MacOS")
+    get_users("users")
+    #     (1, 'User One', 'erauser1@gmail.com', 'e4:d3:7a:49:bb:4a', '7017630724')
+    # (2, 'User Two', 'erauser2@gmail.com', 'e6:8a:39:51:87:f1', '1161057898')
 
     conn.commit()
     conn.close()

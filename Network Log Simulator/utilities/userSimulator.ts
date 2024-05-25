@@ -4,8 +4,8 @@ import { urls } from "../support/urls";
 
 export class UserSimulator {
     // Dictionary to store user mac addresses and their corresponding metadata
-    private static user_floor_locations: { [floor_id: number]: [{ x: number, y: number, nap: number, name: string, email: string, chat_id: string, mac_address: string }] } = {};
-    private static user_dict: { [mac_address: string]: { x: number, y: number, nap: number, name: string, email: string, chat_id: string, mac_address: string } } = {};
+    private static user_floor_locations: { [floor_id: number]: [{ x: number, y: number, nap: number, name: string, email: string, chat_id: string, mac_address: string, os_type: string }] } = {};
+    private static user_dict: { [mac_address: string]: { x: number, y: number, nap: number, name: string, email: string, chat_id: string, mac_address: string, os_type: string } } = {};
     private static num_floors = 0;
 
     // private static numberOfUsers: number = 150;
@@ -39,14 +39,14 @@ export class UserSimulator {
         });
     }
 
-    private static add_user_to_db(user: { id: number, name: string, email: string, mac_address: string, chat_id: string }, floorPlan: any) {
-        const { id, name, email, mac_address, chat_id } = user;
-        console.log("User: ", user);
+    private static add_user_to_db(user: { id: number, name: string, email: string, mac_address: string, chat_id: string, os_type: string }, floorPlan: any) {
+        const { id, name, email, mac_address, chat_id, os_type } = user;
+        // console.log("User: ", user);
         // console.log(`User: ${name}, MAC Address: ${mac_address}, Email: ${email}, Chat ID: ${chat_id}`);
         var randomPos = this.getRandomLocation(floorPlan);
         const nearestAP = this.findNearestAP({ x: randomPos.x, y: randomPos.y, nap: 0 }, floorPlan);
-        console.log("Mac Address: ", mac_address);
-        this.user_dict[mac_address] = { x: randomPos.x, y: randomPos.y, nap: nearestAP.nap, name: name, email: email, chat_id: chat_id, mac_address: mac_address };
+        // console.log("Mac Address: ", mac_address);
+        this.user_dict[mac_address] = { x: randomPos.x, y: randomPos.y, nap: nearestAP.nap, name: name, email: email, chat_id: chat_id, mac_address: mac_address, os_type: os_type };
     }
 
     public static initializeUsers(floorPlan: any) {
@@ -61,12 +61,12 @@ export class UserSimulator {
                 var primary_users = data.payload.primary_users;
                 var secondary_users = data.payload.secondary_users;
                 // console.log("Primary Users: ", primary_users.length);
-                primary_users.forEach((user: { id: number, name: string, email: string, mac_address: string, chat_id: string }) => {
+                primary_users.forEach((user: { id: number, name: string, email: string, mac_address: string, chat_id: string, os_type: string }) => {
                     this.add_user_to_db(user, floorPlan);
                 });
 
                 // console.log("Secondary Users: ", secondary_users.length);
-                secondary_users.forEach((user: { id: number, name: string, email: string, mac_address: string, chat_id: string }) => {
+                secondary_users.forEach((user: { id: number, name: string, email: string, mac_address: string, chat_id: string, os_type: string }) => {
                     this.add_user_to_db(user, floorPlan);
                 });
                 var floor_ids: number[] = [];
@@ -93,7 +93,7 @@ export class UserSimulator {
                             this.user_floor_locations[floor_id].push(this.user_dict[user.mac_address]);
                             // console.log("User: ", user);
                         });
-                        console.log(`Floor ID: ${floor_id}, Users Count : ${Object.keys(this.user_floor_locations[floor_id]).length}`);
+                        // console.log(`Floor ID: ${floor_id}, Users Count : ${Object.keys(this.user_floor_locations[floor_id]).length}`);
                     });
                     // console.log("User Floor Locations: ", this.user_floor_locations);
                 });
@@ -131,7 +131,7 @@ export class UserSimulator {
         return updatedLocation;
     }
 
-    public static updateUserlocation(floorPlan: any): { x: number, y: number, nap: number, signalStrength: number, mac_address: String, name: String, email: String, chat_id: String} {
+    public static updateUserlocation(floorPlan: any): { x: number, y: number, nap: number, signalStrength: number, mac_address: String, name: String, email: String, chat_id: String, os_type: String} {
         var floor_obj = this.user_floor_locations[floorPlan.id];
         var random_user_id = Math.floor(Math.random() * this.user_floor_locations[floorPlan.id].length);
         var random_user_obj = Object(floor_obj)[random_user_id];

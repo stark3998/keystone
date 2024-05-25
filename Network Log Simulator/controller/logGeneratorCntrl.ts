@@ -55,7 +55,7 @@ class LogGeneratorCntrl {
                 });
             }
     
-            const intervalId = setInterval(generateAndStreamData, 200);
+            const intervalId = setInterval(generateAndStreamData, 500);
     
             // End the stream after 5 seconds (for demonstration)
             // setTimeout(() => {
