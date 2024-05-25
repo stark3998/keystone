@@ -46,6 +46,21 @@ export class Floorplan {
         });
     }
 
+    public getAllPlanIds(callback: (err: any, rows: [{ "id": number }] | null) => void): void {
+        // Connect to the SQLite database
+        const db = getDatabaseInstance();
+
+        // Get all plans from the database
+        const selectQuery = `SELECT id FROM plans`;
+        db.all(selectQuery, [], function (err: any, rows: [{ "id": number }]) {
+            if (err) {
+                callback(err, null);
+            } else {
+                callback(null, rows);
+            }
+        });
+    }
+
     /**
      * Saves a floor plan to the database.
      * @param planData - The data of the floor plan to be saved.
@@ -156,13 +171,13 @@ export class Floorplan {
         return new Promise((resolve, reject) => {
             floorplan.getPlanByName(name, (err: any, row: PlanRow | null) => {
                 if (err) {
-                    reject({error: "Error fetching plan", code: 500})
+                    reject({ error: "Error fetching plan", code: 500 })
                 } else {
                     if (row) {
                         row.data = JSON.parse(row.data.toString());
-                        resolve({payload: row, code: 200})
+                        resolve({ payload: row, code: 200 })
                     } else {
-                        reject({error: "Plan not found", code: 404})
+                        reject({ error: "Plan not found", code: 404 })
                     }
                 }
             });

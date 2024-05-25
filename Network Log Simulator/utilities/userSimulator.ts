@@ -72,10 +72,10 @@ export class UserSimulator {
                 var floor_ids: number[] = [];
                 console.log("User Dict: ", Object.keys(this.user_dict).length);
 
-                FloorPlan.getAllFloorPlans().then((floorPlan: any) => {
-                    console.log("Floor Plan Count: ", floorPlan.plans.length);
-                    this.num_floors = floorPlan.plans.length;
-                    floorPlan.plans.forEach((floor: any) => {
+                FloorPlan.getPlanIds().then((floorPlan: any) => {
+                    console.log("Floor Plan Count: ", floorPlan.planIds.length);
+                    this.num_floors = floorPlan.planIds.length;
+                    floorPlan.planIds.forEach((floor: any) => {
                         floor_ids.push(floor.id);
                     });
 

@@ -28,4 +28,16 @@ export class FloorPlan {
                 })
         })
     }
+
+    public static getPlanIds(): Promise<any> {
+        return new Promise((resolve, reject) => {
+            axios.get(urls.main_server + urls.floor_plan_ids_api).then(res => {
+                resolve(res.data);
+            })
+                .catch(err => {
+                    console.log(err);
+                    reject(err);
+                })
+        })
+    }
 }

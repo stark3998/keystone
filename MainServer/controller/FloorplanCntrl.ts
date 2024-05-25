@@ -35,6 +35,24 @@ class FloorplanCntrl {
     // Adding the delete route
     router.route("/deletePlan").delete(Validator.validate, FloorplanCntrl.deletePlan);
 
+    router.route("/getPlanIds").get(Validator.validate, FloorplanCntrl.getPlanIds);
+
+  }
+
+  public static getPlanIds(req: express.Request, res: express.Response): void {
+    console.log('getPlanIds -', req.url);
+
+    floorplan.getAllPlanIds((err: any, rows: [{ "id": number }] | null) => {
+      if (err) {
+        res.status(500).json({ message: "Error fetching plan ids" });
+      } else {
+        if (rows) {
+          res.status(200).json({ planIds: rows });
+        } else {
+          res.status(404).json({ message: "Plan ids not found" });
+        }
+      }
+    });
   }
 
   /**
