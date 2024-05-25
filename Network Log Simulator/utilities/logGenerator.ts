@@ -52,7 +52,7 @@ export class LogGenerator {
         'Name': location.name,
         'User Name': location.name.replace(/\s/g, '').toLowerCase(),
         'MAC Address': location.mac_address,
-        'IP Address': faker.internet.ip(),
+        'IP Address': faker.internet.ipv4(),
         'OS': location.os_type,
         'Associated Access Point': 'AP' + location.nap.toString(),
         'Associated SSID': floorPlan.name,
