@@ -49,7 +49,7 @@ export class UserSimulator {
         this.user_dict[mac_address] = { x: randomPos.x, y: randomPos.y, nap: nearestAP.nap, name: name, email: email, chat_id: chat_id, mac_address: mac_address, os_type: os_type };
     }
 
-    public static initializeUsers(floorPlan: any) {
+    public static initializeUsers() {
         // Clear the userLocations dictionary
         this.user_floor_locations = {};
         this.user_dict = {};
@@ -61,15 +61,16 @@ export class UserSimulator {
                 var primary_users = data.payload.primary_users;
                 var secondary_users = data.payload.secondary_users;
                 // console.log("Primary Users: ", primary_users.length);
-                primary_users.forEach((user: { id: number, name: string, email: string, mac_address: string, chat_id: string, os_type: string }) => {
-                    this.add_user_to_db(user, floorPlan);
-                });
+                // primary_users.forEach((user: { id: number, name: string, email: string, mac_address: string, chat_id: string, os_type: string }) => {
+                //     this.add_user_to_db(user, floorPlan);
+                // });
 
-                // console.log("Secondary Users: ", secondary_users.length);
-                secondary_users.forEach((user: { id: number, name: string, email: string, mac_address: string, chat_id: string, os_type: string }) => {
-                    this.add_user_to_db(user, floorPlan);
-                });
+                // // console.log("Secondary Users: ", secondary_users.length);
+                // secondary_users.forEach((user: { id: number, name: string, email: string, mac_address: string, chat_id: string, os_type: string }) => {
+                //     this.add_user_to_db(user, floorPlan);
+                // });
                 var floor_ids: number[] = [];
+                var floor_plans: any = {};
                 console.log("User Dict: ", Object.keys(this.user_dict).length);
 
                 FloorPlan.getPlanIds().then((floorPlan: any) => {
@@ -77,10 +78,12 @@ export class UserSimulator {
                     this.num_floors = floorPlan.planIds.length;
                     floorPlan.planIds.forEach((floor: any) => {
                         floor_ids.push(floor.id);
+                        floor_plans[floor.id] = floor;
                     });
 
-                    secondary_users.forEach((user: { id: number, name: string, email: string, mac_address: string, chat_id: string }) => {
+                    secondary_users.forEach((user: { id: number, name: string, email: string, mac_address: string, chat_id: string, os_type: string }) => {
                         var randomNumber = Math.floor(Math.random() * (this.num_floors + 1));
+                        this.add_user_to_db(user, floor_plans[randomNumber]);
                         if (this.user_floor_locations[floor_ids[randomNumber]] == undefined) {
                             this.user_floor_locations[floor_ids[randomNumber]] = [this.user_dict[user.mac_address]];
                         }
@@ -89,7 +92,8 @@ export class UserSimulator {
                         }
                     });
                     floor_ids.forEach((floor_id: number) => {
-                        primary_users.forEach((user: { id: number, name: string, email: string, mac_address: string, chat_id: string }) => {
+                        primary_users.forEach((user: { id: number, name: string, email: string, mac_address: string, chat_id: string, os_type: string }) => {
+                            this.add_user_to_db(user, floor_plans[floor_id]);
                             this.user_floor_locations[floor_id].push(this.user_dict[user.mac_address]);
                             // console.log("User: ", user);
                         });

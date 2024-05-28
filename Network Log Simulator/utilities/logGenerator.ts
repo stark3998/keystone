@@ -7,6 +7,7 @@ export class LogGenerator {
   constructor() {
     // Initialize any properties or perform any setup logic here
     // LogGenerator.generateRandomMacAddresses();
+    LogGenerator.initializeUsers();
   }
 
   // Function to generate a random MAC address
@@ -25,8 +26,8 @@ export class LogGenerator {
     return Math.floor(Math.random() * (1000000 - 1000) + 1000);
   }
 
-  public static initializeUsers(floorPlan: any) {
-    UserSimulator.initializeUsers(floorPlan);
+  public static initializeUsers() {
+    UserSimulator.initializeUsers();
   }
 
   // Generate a list of fake WiFi access point logs
