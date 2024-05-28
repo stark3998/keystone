@@ -55,13 +55,13 @@ class LogGeneratorCntrl {
                 });
             }
     
-            const intervalId = setInterval(generateAndStreamData, 500);
+            const intervalId = setInterval(generateAndStreamData, 700);
     
             // End the stream after 5 seconds (for demonstration)
-            setTimeout(() => {
-                clearInterval(intervalId);
-                res.end();
-            }, 50000); // End the stream after 5 seconds (for demonstration)
+            // setTimeout(() => {
+            //     clearInterval(intervalId);
+            //     res.end();
+            // }, 50000); // End the stream after 5 seconds (for demonstration)
 
             // this.generateWifiAccessPointLogs(floorPlanData.plan).then(response => {
             //     // console.log('Generated Log:', response.log);
