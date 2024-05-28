@@ -2,40 +2,70 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "label": "Git Pull Gunshot API",
+            "type": "shell",
+            "command": "cd './Gunshot API' && git pull",
+            "problemMatcher": []
+        },
+        {
+            "label": "Git Pull Main Server",
+            "type": "shell",
+            "command": "cd './MainServer' && git pull",
+            "problemMatcher": []
+        },
+        {
+            "label": "Git Pull Network Log Simulator",
+            "type": "shell",
+            "command": "cd './Network Log Simulator' && git pull",
+            "problemMatcher": []
+        },
+        {
+            "label": "Git Pull Era Frontend",
+            "type": "shell",
+            "command": "cd './era-frontend' && git pull origin main",
+            "problemMatcher": []
+        },
+        {
             "label": "Start Gunshot API",
             "type": "shell",
             "command": "cd './Gunshot API' && source env/bin/activate && python3 main.py",
-            "problemMatcher": []
+            "problemMatcher": [],
+            "dependsOn": ["Git Pull Gunshot API"]
         },
         {
             "label": "Start Main Server Watcher",
             "type": "shell",
             "command": "cd './MainServer' && npm i && npx tsc --watch",
-            "problemMatcher": []
+            "problemMatcher": [],
+            "dependsOn": ["Git Pull Main Server"]
         },
         {
             "label": "Start Main Server",
             "type": "shell",
             "command": "cd './MainServer' && npm start",
-            "problemMatcher": []
+            "problemMatcher": [],
+            "dependsOn": ["Git Pull Main Server"]
         },
         {
             "label": "Start Network Log Simulator Watcher",
             "type": "shell",
             "command": "cd './Network Log Simulator' && npm i && npx tsc --watch",
-            "problemMatcher": []
+            "problemMatcher": [],
+            "dependsOn": ["Git Pull Network Log Simulator"]
         },
         {
             "label": "Start Network Log Simulator",
             "type": "shell",
             "command": "cd './Network Log Simulator' && npm start",
-            "problemMatcher": []
+            "problemMatcher": [],
+            "dependsOn": ["Git Pull Network Log Simulator"]
         },
         {
             "label": "Start Era Frontend",
             "type": "shell",
             "command": "cd './era-frontend' && npm run dev",
-            "problemMatcher": []
+            "problemMatcher": [],
+            "dependsOn": ["Git Pull Era Frontend"]
         },
         {
             "label": "Start All Projects",
