@@ -4,7 +4,7 @@ import { Server as WebSocketServer, WebSocket } from 'ws';
 
 export class TriggerCntrl {
     public router: express.Router = express.Router();
-    private static wss: WebSocketServer;
+    public static wss: WebSocketServer;
 
     /**
     * The method constructor. Constructor
@@ -23,7 +23,7 @@ export class TriggerCntrl {
     */
     public static setRouterMiddleWare(router: express.Router): void {
         router.route('/trigger-alert')
-            .post(Validator.validate, TriggerCntrl.triggerAlert);
+            .get(Validator.validate, TriggerCntrl.triggerAlert);
     }
 
     /**
@@ -36,12 +36,16 @@ export class TriggerCntrl {
     public static triggerAlert(req: express.Request, res: express.Response): void {
             console.log('triggerAlert -', req.url);
 
-            this.wss.clients.forEach((client) => {
+            // console.log("bhbwd");
+            // console.log(TriggerCntrl.wss);
+            TriggerCntrl.wss.clients.forEach((client) => {
                 if (client.readyState === WebSocket.OPEN) {
+                    // console.log("Hi");
                     client.send("alertMessage");
                 }
             });
         
+            // console.log("Hello");
             res.status(200).send('Alert triggered');
     }
 

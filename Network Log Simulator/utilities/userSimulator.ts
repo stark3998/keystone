@@ -18,7 +18,6 @@ export class UserSimulator {
     private static getRandomLocation(floorPlan: any): { x: number, y: number } {
         // Create a list of allowed locations based on the floor plan
         const allowedLocations: { x: number, y: number }[] = [];
-        // console.log(floorPlan.width, "jhkvhjv");
         for (let x = 0; x < floorPlan.width; x++) {
             for (let y = 0; y < floorPlan.height; y++) {
                 const location = { x, y };

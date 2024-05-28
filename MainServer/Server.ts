@@ -15,6 +15,7 @@ import { emailServiceCntrl } from './controller/EmailServiceCntrl';
 
 import { Server as WebSocketServer } from 'ws';
 import { TriggerCntrl } from './controller/TriggerCntrl';
+import { TelegramService } from './utilities/telegramService';
 
 /**
  * Class representing the server.
@@ -95,10 +96,10 @@ const api: Server = new Server();
 // Set up middleware
 api.setMiddleware();
 
-// Set up router middleware
-api.setRouterMiddleWare();
-
 // Start the server
 api.start();
 
-// TelegramService.telegramBot();
+// Set up router middleware
+api.setRouterMiddleWare();
+
+TelegramService.telegramBot(Server.wss);
