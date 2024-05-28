@@ -18,6 +18,7 @@ export class UserSimulator {
     private static getRandomLocation(floorPlan: any): { x: number, y: number } {
         // Create a list of allowed locations based on the floor plan
         const allowedLocations: { x: number, y: number }[] = [];
+        // console.log(floorPlan.width, "jhkvhjv");
         for (let x = 0; x < floorPlan.width; x++) {
             for (let y = 0; y < floorPlan.height; y++) {
                 const location = { x, y };
@@ -44,6 +45,7 @@ export class UserSimulator {
         // console.log("User: ", user);
         // console.log(`User: ${name}, MAC Address: ${mac_address}, Email: ${email}, Chat ID: ${chat_id}`);
         var randomPos = this.getRandomLocation(floorPlan);
+        // console.log(floorPlan.width);
         const nearestAP = this.findNearestAP({ x: randomPos.x, y: randomPos.y, nap: 0 }, floorPlan);
         // console.log("Mac Address: ", mac_address);
         this.user_dict[mac_address] = { x: randomPos.x, y: randomPos.y, nap: nearestAP.nap, name: name, email: email, chat_id: chat_id, mac_address: mac_address, os_type: os_type };
@@ -74,16 +76,20 @@ export class UserSimulator {
                 console.log("User Dict: ", Object.keys(this.user_dict).length);
 
                 FloorPlan.getPlanIds().then((floorPlan: any) => {
-                    console.log("Floor Plan Count: ", floorPlan.planIds.length);
-                    this.num_floors = floorPlan.planIds.length;
-                    floorPlan.planIds.forEach((floor: any) => {
+                    // console.log(floorPlan.plans.length);
+                    console.log("Floor Plan Count: ", floorPlan.plans.length);
+                    this.num_floors = floorPlan.plans.length;
+                    floorPlan.plans.forEach((floor: any) => {
                         floor_ids.push(floor.id);
                         floor_plans[floor.id] = floor;
+                        //  console.log(floor.width);
                     });
 
                     secondary_users.forEach((user: { id: number, name: string, email: string, mac_address: string, chat_id: string, os_type: string }) => {
-                        var randomNumber = Math.floor(Math.random() * (this.num_floors + 1));
-                        this.add_user_to_db(user, floor_plans[randomNumber]);
+                        var randomNumber = Math.floor(Math.random() * (this.num_floors));
+                        // console.log(floor_ids[randomNumber], floor_plans[floor_ids[randomNumber]], floor_ids, randomNumber);
+                        // console.log(floor_plans[randomNumber], randomNumber, floor_plans);
+                        this.add_user_to_db(user, floor_plans[floor_ids[randomNumber]]);
                         if (this.user_floor_locations[floor_ids[randomNumber]] == undefined) {
                             this.user_floor_locations[floor_ids[randomNumber]] = [this.user_dict[user.mac_address]];
                         }

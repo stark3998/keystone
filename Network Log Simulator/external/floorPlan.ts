@@ -31,7 +31,8 @@ export class FloorPlan {
 
     public static getPlanIds(): Promise<any> {
         return new Promise((resolve, reject) => {
-            axios.get(urls.main_server + urls.floor_plan_ids_api).then(res => {
+            axios.get(urls.main_server + urls.all_floor_plans_api).then(res => {
+                // console.log(res.data);
                 resolve(res.data);
             })
                 .catch(err => {
