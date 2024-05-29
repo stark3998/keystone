@@ -128,7 +128,7 @@ export class Floorplan {
      * @param plan - The floor plan data.
      * @returns A 2D array representing the floor plan.
      */
-    public transformMaze(plan: PlanRow): number[][] {
+    public transformMaze(plan: PlanRow, targetX: number, targetY: number): number[][] {
         let rows: number = plan.height;
         let cols: number = plan.width;
         var maze: number[][] = new Array(rows);
@@ -141,6 +141,16 @@ export class Floorplan {
         data.blocked.forEach((point: { x: number; y: number; }) => {
             maze[point.x][point.y] = 1;
         });
+
+        if(targetX != -1 && targetY != -1){
+            var padding: number = 2;
+            for (let i = Math.max(0, targetY - padding); i <= Math.min(rows - 1, targetY + padding); i++) {
+                for (let j = Math.max(0, targetX - padding); j <= Math.min(cols - 1, targetX + padding); j++) {
+                    maze[i][j] = 1;
+                }
+            }
+        }
+        
         //access points
         // plan.data.access.forEach(point => {
         //     maze[point.x][point.y] = 9;

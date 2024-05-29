@@ -70,9 +70,9 @@ export class TelegramService {
                     GunShotDetector.getGunShotData(link).then(res => {
                         console.log(res.data);
                         if (res.data.Detected === 'Gun Shot') {
-                            TelegramService.bot.sendMessage(msg.chat.id, 'Gunshot detected! Please report the emergency.');
+                            TelegramService.bot.sendMessage(msg.chat.id, 'Gunshot detected! System admin and first responders notified.');
                             wss.clients.forEach((client) => {
-                                client.send(`Alert for ${this.users[msg.chat.id]}`);
+                                client.send(`${this.users[msg.chat.id]}`);
                             });
                         } else {
                             TelegramService.bot.sendMessage(msg.chat.id, `No emergency detected, We recognized ${res.data.Detected}`);
@@ -97,7 +97,7 @@ export class TelegramService {
                     TelegramService.bot.sendMessage(chatId, 'Thank you for reporting the emergency. Please await further instructions.');
                     userState = 'waitingForReport';
                     wss.clients.forEach((client) => {
-                        client.send(`Alert for ${this.users[chatId]}`);
+                        client.send(`${this.users[chatId]}`);
                     });
                 }
             }

@@ -40,6 +40,8 @@ class EscapeRouteCntrl {
         var floorPlanName: String = String(req.query.floorplanName);
         var userX = Number(req.query.userX);
         var userY = Number(req.query.userY);
+        var targetX = Number(req.query.targetX);
+        var targetY = Number(req.query.targetY);
         var goalNodes: myNode[] = [];
 
         var maze: number[][] = [];
@@ -51,7 +53,7 @@ class EscapeRouteCntrl {
             } else {
                 if (row) {
                     // console.log("Success fetching plan - ", row);
-                    maze = floorplan.transformMaze(row);
+                    maze = floorplan.transformMaze(row, targetX, targetY);
                     goalNodes = floorplan.getAccessPoints(row);
                     // console.log(floorPlanName, userX, userY, maze);
 
