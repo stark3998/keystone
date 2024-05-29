@@ -7,7 +7,9 @@ export class LogGenerator {
   constructor() {
     // Initialize any properties or perform any setup logic here
     // LogGenerator.generateRandomMacAddresses();
+    UserSimulator.initialize_locations();
     LogGenerator.initializeUsers();
+    
   }
 
   // Function to generate a random MAC address

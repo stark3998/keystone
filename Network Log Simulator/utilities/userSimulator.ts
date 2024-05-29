@@ -1,6 +1,7 @@
 import { th } from "@faker-js/faker";
 import { FloorPlan } from "../external/floorPlan";
 import { urls } from "../support/urls";
+import e from "express";
 
 export class UserSimulator {
     // Dictionary to store user mac addresses and their corresponding metadata
@@ -8,6 +9,7 @@ export class UserSimulator {
     private static user_dict: { [mac_address: string]: { x: number, y: number, nap: number, name: string, email: string, chat_id: string, mac_address: string, os_type: string, signal_strength: number } } = {};
     private static num_floors = 0;
     private static primary_users_location: { [floor_id: number]: [{ x: number, y: number, nap: number, name: string, email: string, chat_id: string, mac_address: string, os_type: string, signal_strength: number }] } = {};
+    private static allowedLocations: { [floor_id: number]: [{ x: number, y: number }] } = {};
 
     // private static numberOfUsers: number = 150;
     // Function to generate a random MAC address
@@ -15,28 +17,56 @@ export class UserSimulator {
         return floor + Array.from({ length: 5 }, () => Math.floor(Math.random() * 256).toString(16).padStart(2, '0')).join(':');
     }
 
+    public static initialize_locations() {
+        console.log("Initializing Locations");
+        FloorPlan.getPlanIds().then((floorPlans: any) => {
+            // console.log(floorPlan.plans.length);
+            console.log("Floor Plan Count: ", floorPlans.plans.length);
+            floorPlans.plans.forEach((floorPlan: any) => {
+                for (let x = 0; x < floorPlan.width - 1; x++) {
+                    for (let y = 0; y < floorPlan.height - 1; y++) {
+                        var location = { x, y };
+                        if (!this.isLocationBlocked(location, floorPlan)) {
+                            if (this.allowedLocations[floorPlan.id] == undefined) {
+                                this.allowedLocations[floorPlan.id] = [location];
+                            }
+                            else {
+                                this.allowedLocations[floorPlan.id].push(location);
+                            }
+                        }
+                        // else {
+                        //     console.log("Blocked Location: ", location.x, location.y);
+                        // }
+                    }
+                }
+            });
+        });
+    }
+
     // Helper function to get a random location within the floor plan
     private static getRandomLocation(floorPlan: any): { x: number, y: number } {
-        // Create a list of allowed locations based on the floor plan
-        const allowedLocations: { x: number, y: number }[] = [];
-        for (let x = 0; x < floorPlan.width; x++) {
-            for (let y = 0; y < floorPlan.height; y++) {
-                const location = { x, y };
-                if (!this.isLocationBlocked(location, floorPlan)) {
-                    allowedLocations.push(location);
-                }
-            }
+        var allowed_loc_length: number = this.allowedLocations[floorPlan.id]?.length;
+        if (allowed_loc_length == 0 || allowed_loc_length == undefined) {
+            console.log("Initializing Locations");
+            this.initialize_locations();
         }
-
-        // Choose a random location from the allowed locations
-        return allowedLocations[Math.floor(Math.random() * allowedLocations.length)];
+        var random_location_index = Math.floor(Math.random() * allowed_loc_length);
+        return this.allowedLocations[floorPlan.id][random_location_index];
     }
 
     public static isLocationBlocked(location: { x: number, y: number }, floorPlan: any): boolean {
-        // console.log(floorPlan.data.blocked, "Hii");
+        // console.log(floorPlan.data.blocked, "Hii", location.x, location.y);
         // var block = JSON.parse(floorPlan.data);
         return floorPlan.data.blocked.some((blockedLocation: any) => {
-            return ((blockedLocation.x === location.x && blockedLocation.y === location.y) || location.x < 0 || location.x >= floorPlan.width || location.y < 0 || location.y >= floorPlan.height);
+            // if (blockedLocation.x === location.x && blockedLocation.y === location.y) {
+            //     console.log(blockedLocation.x, blockedLocation.y, location.x, location.y);
+            // })
+            var flag: Boolean = (blockedLocation.x === location.x && blockedLocation.y === location.y) || location.x < 0 || location.x >= floorPlan.width || location.y < 0 || location.y >= floorPlan.height
+            // if (flag) {
+            //     // console.log("Blocked Location: ", blockedLocation.x, blockedLocation.y, location.x, location.y);
+            //     console.log("Floor Plan: ", floorPlan.width, floorPlan.height, location.x, location.y, blockedLocation.x, blockedLocation.y);
+            // }
+            return flag;
         });
     }
 
@@ -152,7 +182,7 @@ export class UserSimulator {
         return updatedLocation;
     }
 
-    public static updateUserlocation(floorPlan: any): { x: number, y: number, nap: number, signalStrength: number, mac_address: String, name: String, email: String, chat_id: String, os_type: String} {
+    public static updateUserlocation(floorPlan: any): { x: number, y: number, nap: number, signalStrength: number, mac_address: String, name: String, email: String, chat_id: String, os_type: String } {
         var floor_obj = this.user_floor_locations[floorPlan.id];
         var random_user_id = Math.floor(Math.random() * this.user_floor_locations[floorPlan.id].length);
         var random_user_obj = Object(floor_obj)[random_user_id];

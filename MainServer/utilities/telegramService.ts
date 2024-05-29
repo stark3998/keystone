@@ -86,6 +86,11 @@ export class TelegramService {
                 const chatId = msg.chat.id;
                 const messageText = msg.text;
 
+                if(messageText === '/report'){
+                    userState = 'waitingForDescription';
+                    TelegramService.bot.sendMessage(chatId, 'Please describe the emergency.');
+                }
+
                 if (userState === 'waitingForReport') {
                     if (messageText === '/report') {
                         userState = 'waitingForDescription';
