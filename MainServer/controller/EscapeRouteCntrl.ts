@@ -50,10 +50,10 @@ class EscapeRouteCntrl {
                 res.status(500).send({ message : "Error fetching plan"});
             } else {
                 if (row) {
-                    console.log("Success fetching plan - ", row);
+                    // console.log("Success fetching plan - ", row);
                     maze = floorplan.transformMaze(row);
                     goalNodes = floorplan.getAccessPoints(row);
-                    console.log(floorPlanName, userX, userY, maze);
+                    // console.log(floorPlanName, userX, userY, maze);
 
                     EscapeRouteCntrl.configAstar(req, res, new myNode(userX, userY), goalNodes, maze)
                 } else {

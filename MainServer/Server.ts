@@ -82,7 +82,7 @@ export class Server {
       credentials: true
     }));
     this.apiApp.use(cookieParser());
-    this.apiApp.use(express.json());
+    this.apiApp.use(express.json({ limit: '500mb' }));
     this.apiApp.use(express.urlencoded({ 'extended': true }));
     // this.apiApp.use(express.static(path.join(__dirname, '..', 'static')));
   }
