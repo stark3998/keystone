@@ -5,8 +5,9 @@ import { urls } from "../support/urls";
 export class UserSimulator {
     // Dictionary to store user mac addresses and their corresponding metadata
     private static user_floor_locations: { [floor_id: number]: [{ x: number, y: number, nap: number, name: string, email: string, chat_id: string, mac_address: string, os_type: string }] } = {};
-    private static user_dict: { [mac_address: string]: { x: number, y: number, nap: number, name: string, email: string, chat_id: string, mac_address: string, os_type: string } } = {};
+    private static user_dict: { [mac_address: string]: { x: number, y: number, nap: number, name: string, email: string, chat_id: string, mac_address: string, os_type: string, signal_strength: number } } = {};
     private static num_floors = 0;
+    private static primary_users_location: { [floor_id: number]: [{ x: number, y: number, nap: number, name: string, email: string, chat_id: string, mac_address: string, os_type: string, signal_strength: number }] } = {};
 
     // private static numberOfUsers: number = 150;
     // Function to generate a random MAC address
@@ -46,8 +47,9 @@ export class UserSimulator {
         var randomPos = this.getRandomLocation(floorPlan);
         // console.log(floorPlan.width);
         const nearestAP = this.findNearestAP({ x: randomPos.x, y: randomPos.y, nap: 0 }, floorPlan);
+        const signalStrength = this.calculateSignalStrength(randomPos, nearestAP.pos);
         // console.log("Mac Address: ", mac_address);
-        this.user_dict[mac_address] = { x: randomPos.x, y: randomPos.y, nap: nearestAP.nap, name: name, email: email, chat_id: chat_id, mac_address: mac_address, os_type: os_type };
+        this.user_dict[mac_address] = { x: randomPos.x, y: randomPos.y, nap: nearestAP.nap, name: name, email: email, chat_id: chat_id, mac_address: mac_address, os_type: os_type, signal_strength: signalStrength };
     }
 
     public static initializeUsers() {
@@ -100,6 +102,12 @@ export class UserSimulator {
                         primary_users.forEach((user: { id: number, name: string, email: string, mac_address: string, chat_id: string, os_type: string }) => {
                             this.add_user_to_db(user, floor_plans[floor_id]);
                             this.user_floor_locations[floor_id].push(this.user_dict[user.mac_address]);
+                            if (this.primary_users_location[floor_id] == undefined) {
+                                this.primary_users_location[floor_id] = [this.user_dict[user.mac_address]];
+                            }
+                            else {
+                                this.primary_users_location[floor_id].push(this.user_dict[user.mac_address]);
+                            }
                             // console.log("User: ", user);
                         });
                         // console.log(`Floor ID: ${floor_id}, Users Count : ${Object.keys(this.user_floor_locations[floor_id]).length}`);
@@ -111,6 +119,10 @@ export class UserSimulator {
                 // Handle any errors that occur during the API call
                 console.error('Error retrieving users:', error);
             });
+    }
+
+    public static getPrimaryUsersLocation(floorId: number) {
+        return this.primary_users_location[floorId];
     }
 
     // Update user location

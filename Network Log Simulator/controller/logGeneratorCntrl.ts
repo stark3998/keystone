@@ -32,21 +32,45 @@ class LogGeneratorCntrl {
         var floorname: string = req.query.name ? req.query.name.toString() : 'DBH%206th%20Floor';
         FloorPlan.getFloorPlan(floorname).then(floorPlanData => {
 
-            // LogGenerator.initializeUsers(floorPlanData.plan);
             res.writeHead(200, {
                 'Content-Type': 'text/plain',
                 'Transfer-Encoding': 'chunked'
             });
+
+            var logs = LogGenerator.getPrimaryUsersLocation(floorPlanData.plan)
+
+            let currentIndex = 0;
+  
+        const intervalIdLog = setInterval(() => {
+            if (currentIndex < logs.length) {
+            // // Send the current data item
+            // console.log('Sending data:', logs[currentIndex]);
+            
+            // Perform your send action here, e.g., send over WebSocket
+            // ws.send(data[currentIndex]);
+
+            res.write(JSON.stringify(logs[currentIndex]) + '\n\n');
+
+            currentIndex++;
+            } else {
+            // Clear the interval once all items have been sent
+            clearInterval(intervalIdLog);
+            // console.log('All data sent');
+            }
+        }, 700); // Interval set to 1 second (1000 milliseconds)
+  
+            // LogGenerator.initializeUsers(floorPlanData.plan);
+            
     
             var generateAndStreamData = () => {
                 LogGenerator.generateWifiAccessPointLogs(floorPlanData.plan).then(resp => {
                     // Stream data to the client
                     res.write(JSON.stringify(resp.log) + '\n\n');
 
-                    res.on('close', () => {
-                        clearInterval(intervalId);
-                        res.end();
-                    });
+                    // res.on('close', () => {
+                    //     clearInterval(intervalId);
+                    //     res.end();
+                    // });
 
                 })
                 .catch(resp => {
@@ -56,6 +80,11 @@ class LogGeneratorCntrl {
             }
     
             const intervalId = setInterval(generateAndStreamData, 700);
+
+            res.on('close', () => {
+                clearInterval(intervalId);
+                res.end();
+            });
     
             // End the stream after 5 seconds (for demonstration)
             // setTimeout(() => {

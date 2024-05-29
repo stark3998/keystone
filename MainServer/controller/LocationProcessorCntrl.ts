@@ -5,15 +5,18 @@ import { UserLocationProcessor } from '../utilities/userLocationProcessor';
 import { Floorplan } from '../utilities/floorplan';
 import { dbFloorRowResponse, PlanRow } from '../support/interfaces';
 
-class LocationProcessorCntrl {
-    public router: express.Router = express.Router();
+import { Server as WebSocketServer, WebSocket } from 'ws';
 
+export class LocationProcessorCntrl {
+    public router: express.Router = express.Router();
+    public static wss: WebSocketServer;
     /**
     * The method constructor. Constructor
     *
     */
-    public constructor() {
+    public constructor(wss: WebSocketServer) {
         LocationProcessorCntrl.setRouterMiddleWare(this.router);
+        LocationProcessorCntrl.wss = wss;
     }
 
     /**
@@ -38,6 +41,7 @@ class LocationProcessorCntrl {
         console.log('getUserLocation -', req.url);
         var floorname: string = req.query.name ? req.query.name.toString() : 'DBH 6th Floor';
         Floorplan.getFloorPlanByName(floorname).then((floorPlanData: dbFloorRowResponse) => {
+
             // console.log("calling");
             res.writeHead(200, {
                 'Content-Type': 'text/plain',
@@ -58,9 +62,12 @@ class LocationProcessorCntrl {
 
     public static processUserLocation(parsed: any, res: express.Response, floorPlanData: any) {
         var userLocation = UserLocationProcessor.processUserLocation(parsed, floorPlanData);
+        LocationProcessorCntrl.wss.clients.forEach((client) => {
+            client.send(JSON.stringify(userLocation) + '\n\n');
+        });
         res.write(JSON.stringify(userLocation) + '\n\n');
     }
 
 }
 
-export let locationProcessorCntrl = new LocationProcessorCntrl()
+// export let locationProcessorCntrl = new LocationProcessorCntrl()

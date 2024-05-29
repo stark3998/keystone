@@ -30,6 +30,34 @@ export class LogGenerator {
     UserSimulator.initializeUsers();
   }
 
+  public static getPrimaryUsersLocation(floorPlan: any){
+    var logs: log[] = []
+    var deviceStatuses: String[] = ['Connected', 'Failed'];
+    UserSimulator.getPrimaryUsersLocation(floorPlan.id).forEach((location) => {
+      logs.push({
+        'Device Status': deviceStatuses[Math.floor(Math.random() * deviceStatuses.length)],
+        'Name': location.name,
+        'User Name': location.name.replace(/\s/g, '').toLowerCase(),
+        'MAC Address': location.mac_address,
+        'IP Address': faker.internet.ipv4(),
+        'OS': location.os_type,
+        'Associated Access Point': 'AP' + location.nap.toString(),
+        'Associated SSID': floorPlan.name,
+        'RSSI (dBm)': location.signal_strength,
+        'Best RSSI (dBm)': location.signal_strength,
+        'Uplink Data': this.generateDataTransferAmount(),
+        'Downlink Data': this.generateDataTransferAmount(),
+        'Avg. data rate': Math.floor(Math.random() * 1000) + 1,
+        'Connected / Disconnected Since': faker.date.recent().toISOString(),
+        'First Detected At': faker.date.past().toISOString(),
+        'Location': { x: location.x, y: location.y },
+        'Sticky': Math.random() < 0.5,
+        'Tag': faker.word.words(5),
+      })
+    });
+    return logs;
+  }
+
   // Generate a list of fake WiFi access point logs
   public static generateWifiAccessPointLogs(floorPlan: any): Promise<logResponse> {
     return new Promise((resolve) => {

@@ -9,13 +9,16 @@ import { configuration } from './support/appConfig';
 import { exampleCntrl } from './controller/ExampleCntrl';
 import { floorplanCntrl } from './controller/FloorplanCntrl';
 import { escapeRouteCntrl } from './controller/EscapeRouteCntrl';
-import { locationProcessorCntrl } from './controller/LocationProcessorCntrl';
+// import { locationProcessorCntrl } from './controller/LocationProcessorCntrl';
 import { userCntrl } from './controller/UserCntrl';
 import { emailServiceCntrl } from './controller/EmailServiceCntrl';
 
 import { Server as WebSocketServer } from 'ws';
 import { TriggerCntrl } from './controller/TriggerCntrl';
 import { TelegramService } from './utilities/telegramService';
+import { LocationProcessorCntrl } from './controller/LocationProcessorCntrl';
+
+import events from 'events';
 
 /**
  * Class representing the server.
@@ -25,7 +28,8 @@ export class Server {
   private apiApp: express.Express;
   private port: number;
 
-  public static wss: WebSocketServer;
+  public static wss1: WebSocketServer;
+  public static wss2: WebSocketServer;
 
   /**
    * Constructor for the Server class.
@@ -35,6 +39,7 @@ export class Server {
     this.port = configuration.webport;
     this.apiApp.disable('x-powered-by');
     this.apiApp.disable('etag');
+    events.EventEmitter.defaultMaxListeners = 10;
   }
 
   /**
@@ -45,7 +50,24 @@ export class Server {
     const server: http.Server = this.apiApp.listen(this.port, () => {
       console.log(`------------API Web Server Starting on port ${this.port} -------------`);
     });
-    Server.wss = new WebSocketServer({ server });
+    Server.wss1 = new WebSocketServer({ noServer: true });
+    Server.wss2 = new WebSocketServer({ noServer: true });
+
+    server.on('upgrade', (request, socket, head) => {
+      const pathname = request.url;
+    
+      if (pathname === '/ws1') {
+        Server.wss1.handleUpgrade(request, socket, head, (ws) => {
+          Server.wss1.emit('connection', ws, request);
+        });
+      } else if (pathname === '/ws2') {
+        Server.wss2.handleUpgrade(request, socket, head, (ws) => {
+          Server.wss2.emit('connection', ws, request);
+        });
+      } else {
+        socket.destroy();
+      }
+    });
   }
 
   /**
@@ -73,7 +95,8 @@ export class Server {
 
   ): void {
 
-    var triggerCntrl = new TriggerCntrl(Server.wss);
+    var triggerCntrl = new TriggerCntrl(Server.wss1);
+    var locationProcessorCntrl = new LocationProcessorCntrl(Server.wss2);
 
     this.apiApp.use('/v1/example', exampleCntrl.router);
     this.apiApp.use('/v1/floorplan', floorplanCntrl.router);
@@ -102,4 +125,4 @@ api.start();
 // Set up router middleware
 api.setRouterMiddleWare();
 
-TelegramService.telegramBot(Server.wss);
+TelegramService.telegramBot(Server.wss1);

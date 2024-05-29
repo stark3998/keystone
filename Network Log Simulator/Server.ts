@@ -9,8 +9,7 @@ import { InputValidationError } from 'openapi-validator-middleware';
 import { configuration } from './support/appConfig';
 import { logGeneratorCntrl } from './controller/logGeneratorCntrl';
 
-
-
+import events from 'events';
 
 export class Server {
 
@@ -27,6 +26,7 @@ export class Server {
     this.port = configuration.webport;
     this.apiApp.disable('x-powered-by');
     this.apiApp.disable('etag');
+    // events.EventEmitter.defaultMaxListeners = 100;
   }
 
   /**
