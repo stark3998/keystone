@@ -279,7 +279,13 @@ def insert_user(table_name, name, email, chat_id, mac_address, os_type):
 
 
 def get_users(table_name):
-    cursor.execute(f"SELECT * FROM {table_name}")
+    cursor.execute(f"SELECT name FROM {table_name}")
+    rows = cursor.fetchall()
+    for row in rows:
+        print(row)
+
+def get_tables():
+    cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
     rows = cursor.fetchall()
     for row in rows:
         print(row)
@@ -304,11 +310,11 @@ if __name__ == "__main__":
     # drop_table("users")
     # create_table("users")
     # insert_users("users", 350)
-    insert_user("users", "Jatin Madan", "madanj@uci.edu", "1161057898", "e6:8a:39:51:87:f1", "MacOS")
-    insert_user("users", "Vaishnavi Desai", "desaivs@uci.edu", "7017630724", "e4:d3:7a:49:bb:4a", "MacOS")
-    get_users("users")
+    # insert_user("users", "Jatin Madan", "madanj@uci.edu", "1161057898", "e6:8a:39:51:87:f1", "MacOS")
+    # insert_user("users", "Vaishnavi Desai", "desaivs@uci.edu", "7017630724", "e4:d3:7a:49:bb:4a", "MacOS")
+    get_users("plans")
     #     (1, 'User One', 'erauser1@gmail.com', 'e4:d3:7a:49:bb:4a', '7017630724')
     # (2, 'User Two', 'erauser2@gmail.com', 'e6:8a:39:51:87:f1', '1161057898')
-
+    # get_tables()
     conn.commit()
     conn.close()

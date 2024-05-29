@@ -29,7 +29,7 @@ class LogGeneratorCntrl {
 
     public static getWifiLogs(req: express.Request, res: express.Response): void {
         console.log('getWifiLogs -', req.url);
-        var floorname: string = req.query.name ? req.query.name.toString() : 'DBH%206th%20Floor';
+        var floorname: string = req.query.name ? req.query.name.toString() : 'RH1';
         FloorPlan.getFloorPlan(floorname).then(floorPlanData => {
 
             res.writeHead(200, {
@@ -107,7 +107,7 @@ class LogGeneratorCntrl {
 
     public static getFloorPlan(req: express.Request, res: express.Response): void {
         console.log('getFloorPlan -', req.url);
-        FloorPlan.getFloorPlan('DBH%206th%20Floor').then(ress => 
+        FloorPlan.getFloorPlan('RH1').then(ress => 
             res.status(200).send(ress)
         )
         .catch(err => res.status(500).send(err));
