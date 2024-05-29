@@ -39,16 +39,25 @@ class EmailServiceCntrl {
 
     public static sendMessage(req: express.Request, res: express.Response): void {
         console.log('sendMessage -', req.url);
-        // console.log("Request: ", req.body);
-        UserService.getAllUsers().then(ress => {
-            ress.payload!.primary_users.forEach(user => {
-                TelegramService.sendMessage(user.chat_id).catch(err => res.status(500).send({error: "Cannot send message"}));
-                // console.log(`ID: ${user.id}, Name: ${user.name}, Email: ${user.email}, chat_id: ${user.chat_id}`);
-            });
-            res.status(200).send("Messages sent successfully!");
+        var users = (name: string) => {
+            if(name == 'vaishnavidesai') return '7017630724';
+            else return '1161057898';
+        }
 
-        })
-        .catch(err => res.status(err.status).send(err));
+
+        TelegramService.sendMessage(users(req.body.user), req.body.path)
+        .then(ress => res.status(200).send("Messages sent successfully!"))
+        .catch(err => res.status(500).send({error: "Cannot send message"}));
+        // console.log("Request: ", req.body);
+        // UserService.getAllUsers().then(ress => {
+        //     ress.payload!.primary_users.forEach(user => {
+        //         TelegramService.sendMessage(user.chat_id).catch(err => res.status(500).send({error: "Cannot send message"}));
+        //         // console.log(`ID: ${user.id}, Name: ${user.name}, Email: ${user.email}, chat_id: ${user.chat_id}`);
+        //     });
+        //     res.status(200).send("Messages sent successfully!");
+
+        // })
+        // .catch(err => res.status(err.status).send(err));
     }
 
     

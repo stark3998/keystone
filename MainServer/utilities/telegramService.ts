@@ -4,6 +4,8 @@ import { keys } from '../support/keys';
 import { GunShotDetector } from '../external/gunShotDetector';
 import { WebSocketService } from './webSocketService';
 import { WebSocketServer } from 'ws';
+import { Readable } from 'stream';
+import path from 'path';
 
 export class TelegramService {
 
@@ -103,19 +105,36 @@ export class TelegramService {
         });
     }
 
-    public static sendMessage(chatid: string): Promise<void> {
+    public static sendMessage(chatid: string, image: string): Promise<void> {
         return new Promise((resolve, reject) => {
             const chatId = parseInt(chatid);
-            var imagePath = '';
-            if(chatId == 7017630724){
-                imagePath = 'assets/VaishPath.jpeg';
-            }
-            else{
-                imagePath = 'assets/JatinPath.jpeg';
-            }
-            TelegramService.bot.sendPhoto(chatId, fs.createReadStream(imagePath), { caption: 'Please follow this path!' })
-                .then(res => resolve())
-                .catch(err => reject());
+            // var imagePath = '';
+            // console.log(image)
+            // Convert base64 string to buffer
+            // const buffer = Buffer.from(image, 'base64');
+            // console.log(buffer);
+
+            // Convert buffer to ReadableStream
+            // const stream = new Readable();
+            // stream.push(buffer);
+            // stream.push(null); // Indicates the end of the stream
+            // console.log(stream);
+            // if(chatId == 7017630724){
+            //     imagePath = 'assets/VaishPath.jpeg';
+            // }
+            // else{
+            //     imagePath = 'assets/JatinPath.jpeg';
+            // }
+            // const tempFilePath = path.join(__dirname, '', 'temp_image.jpg');
+
+            // Write buffer data to the temporary file
+            fs.writeFileSync(`assets/${chatId}.png`, image.split(';base64,').pop()!, {encoding: 'base64'});
+            // resolve();
+            TelegramService.bot.sendPhoto(chatId, fs.createReadStream(`assets/${chatId}.png`), { caption: 'Please follow this path!' })
+                .then(res => {
+                    fs.unlinkSync(`assets/${chatId}.png`);
+                    resolve()})
+                .catch(err => {console.log(err); reject()});
         });
     }
 }
