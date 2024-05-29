@@ -9,8 +9,12 @@ export class UserLocationProcessor {
      * @returns Object containing the MAC Address and the random location within the signal radius.
      */
     public static processUserLocation(chunk: any, floorPlan: PlanRow): { 'MAC Address': string, Location: { x: number, y: number }, 'Device Status': string, 'Name': string, 'User Name': string, 'IP Address': string, 'OS': string, 'Associated SSID': string, 'Floor Plan': string } {
-        // console.log(chunk);
-        const apNumber = parseInt(chunk['Associated Access Point'].substr(2), 10);
+        if (chunk['Associated Access Point'] === undefined || chunk['RSSI (dBm)'] === undefined) {
+            console.log(chunk);
+            console.log(floorPlan.name);
+            return { 'MAC Address': "XX:XX:XX:XX:XX", Location: { x: 1, y: 1 }, 'Device Status': 'Disconnected', 'Name': 'XXX', 'User Name': 'John Doe', 'IP Address': '192.168.0.X', 'OS': 'Windows', 'Associated SSID': 'SSID XXX', 'Floor Plan': floorPlan.name };
+        }
+        const apNumber = parseInt(chunk['Associated Access Point']?.substr(2), 10);
         const position = this.findAP(apNumber, floorPlan).pos;
         const radius = this.calculateSignalStrength(chunk['RSSI (dBm)']);
         const randomLocation = this.pickRandomPoint(this.generatePointsOnCircle(position.x, position.y, radius, floorPlan));
