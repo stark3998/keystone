@@ -44,7 +44,7 @@
             "type": "shell",
             "command": "cd './MainServer' && npm start",
             "problemMatcher": [],
-            "dependsOn": ["Git Pull Main Server"]
+            "dependsOn": ["Git Pull Main Server","Start Main Server Watcher"]
         },
         {
             "label": "Start Network Log Simulator Watcher",
@@ -58,22 +58,20 @@
             "type": "shell",
             "command": "cd './Network Log Simulator' && npm start",
             "problemMatcher": [],
-            "dependsOn": ["Git Pull Network Log Simulator"]
+            "dependsOn": ["Git Pull Network Log Simulator", "Start Network Log Simulator Watcher"]
         },
         {
             "label": "Start Era Frontend",
             "type": "shell",
             "command": "cd './era-frontend' && npm run dev",
             "problemMatcher": [],
-            "dependsOn": ["Git Pull Era Frontend"]
+            "dependsOn": ["Git Pull Era Frontend", "Start Network Log Simulator", "Start Main Server", "Start Gunshot API"]
         },
         {
             "label": "Start All Projects",
             "dependsOn": [
                 "Start Gunshot API",
-                "Start Main Server Watcher",
                 "Start Main Server",
-                "Start Network Log Simulator Watcher",
                 "Start Network Log Simulator",
                 "Start Era Frontend"
             ],

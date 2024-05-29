@@ -8,13 +8,14 @@ export class UserLocationProcessor {
      * @param floorPlan The floor plan data.
      * @returns Object containing the MAC Address and the random location within the signal radius.
      */
-    public static processUserLocation(chunk: any, floorPlan: PlanRow): { 'MAC Address': string, Location: { x: number, y: number }, 'Device Status': string, 'Name': string, 'User Name': string, 'IP Address': string, 'OS': string, 'Associated SSID': string } {
+    public static processUserLocation(chunk: any, floorPlan: PlanRow): { 'MAC Address': string, Location: { x: number, y: number }, 'Device Status': string, 'Name': string, 'User Name': string, 'IP Address': string, 'OS': string, 'Associated SSID': string, 'Floor Plan': string } {
         // console.log(chunk);
         const apNumber = parseInt(chunk['Associated Access Point'].substr(2), 10);
         const position = this.findAP(apNumber, floorPlan).pos;
         const radius = this.calculateSignalStrength(chunk['RSSI (dBm)']);
         const randomLocation = this.pickRandomPoint(this.generatePointsOnCircle(position.x, position.y, radius, floorPlan));
-        return { 'MAC Address': chunk['MAC Address'], Location: randomLocation, 'Device Status': chunk['Device Status'], 'Name': chunk['Name'], 'User Name': chunk['User Name'], 'IP Address': chunk['IP Address'], 'OS': chunk['OS'], 'Associated SSID': chunk['Associated SSID']};
+        // console.log("Mac Address", chunk['MAC Address'], "Floorplan", floorPlan.name, "location", randomLocation);
+        return { 'MAC Address': chunk['MAC Address'], Location: randomLocation, 'Device Status': chunk['Device Status'], 'Name': chunk['Name'], 'User Name': chunk['User Name'], 'IP Address': chunk['IP Address'], 'OS': chunk['OS'], 'Associated SSID': chunk['Associated SSID'], 'Floor Plan': floorPlan.name };
     }
 
     /**
@@ -26,7 +27,7 @@ export class UserLocationProcessor {
         // Assuming a simple signal strength model where signal strength decreases linearly with distance
         const maxSignalStrength = 100; // Maximum signal strength
         const maxDistance = 100;       // Maximum distance for full signal strength
-        
+
         // Calculate the distance from the access point to the user based on the signal strength
         const distance = (maxDistance * (maxSignalStrength - signalStrength)) / maxSignalStrength;
         return distance;
@@ -42,21 +43,21 @@ export class UserLocationProcessor {
      * @returns Array of points on the circumference of the circle.
      */
     private static generatePointsOnCircle(x_center: number, y_center: number, radius: number, floorPlan: any): { x: number, y: number }[] {
-        const points: { x: number, y: number }[] = [];
-    
+        var points: { x: number, y: number }[] = [];
+
         for (let theta = 0; theta <= 2 * Math.PI; theta += (1 / radius)) {
-            const x = x_center + radius * Math.cos(theta);
-            const y = y_center + radius * Math.sin(theta);
-    
+            var x = Math.floor(x_center + radius * Math.cos(theta));
+            var y = Math.floor(y_center + radius * Math.sin(theta));
+
             // Ensure x and y are within bounds
-            if (!this.isLocationBlocked({x: x, y: y}, floorPlan)) {
-                points.push({ x: Math.ceil(x), y: Math.ceil(y) });
+            if (!this.isLocationBlocked({ x: x, y: y }, floorPlan)) {
+                points.push({ x: x, y: y });
             }
         }
-    
+
         // If points array is empty, add { x: 0, y: 0 }
         if (points.length === 0) {
-            points.push({ x: 0, y: 0 });
+            points.push({ x: 1, y: 1 });
         }
         // console.log(points);
         return points;
@@ -66,7 +67,7 @@ export class UserLocationProcessor {
         // console.log(floorPlan.data.blocked, "Hii");
         // var block = JSON.parse(floorPlan.data);
         return floorPlan.data.blocked.some((blockedLocation: any) => {
-            return ((blockedLocation.x === location.x && blockedLocation.y === location.y) || location.x < 0 || location.x >= floorPlan.width || location.y < 0 || location.y >= floorPlan.height);
+            return ((blockedLocation.x === location.x && blockedLocation.y === location.y) || location.x <= 0 || location.x >= floorPlan.width || location.y <= 0 || location.y >= floorPlan.height);
         });
     }
 
@@ -93,7 +94,7 @@ export class UserLocationProcessor {
             accessPoint = floorPlan.data.wifi[i];
         }
         if (accessPoint == undefined) {
-            accessPoint = {x: 0, y: 0}
+            accessPoint = { x: 0, y: 0 }
         }
         return { pos: accessPoint };
     }
