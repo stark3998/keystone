@@ -31,16 +31,16 @@ export class Astar {
             const current: myNode = openList.reduce((minNode, node) => node.f < minNode.f ? node : minNode, openList[0]);
 
             if (goals.some(goal => current.x === goal.x && current.y === goal.y)) {
-                console.log("Found goal node:", current);
+                // console.log("Found goal node:", current);
                 // Reconstruct path
                 const path: myNode[] = [];
                 let node: myNode | null = current;
                 while (node !== null) {
-                    console.log("Adding node to path:", node);
+                    // console.log("Adding node to path:", node);
                     path.unshift(node);
                     node = node.parent;
                 }
-                console.log("Final path:", path);
+                // console.log("Final path:", path);
                 return path;
             }
 
@@ -88,7 +88,7 @@ export class Astar {
     public static runAStar(startNode: myNode, goalNodes: myNode[], maze: number[][]): Promise<myNode[]> {
         return new Promise((resolve, reject) => {
             const path: myNode[] = this.aStar(startNode, goalNodes, maze);
-            console.log(path);
+            // console.log(path);
             return resolve(path);
         });
     }

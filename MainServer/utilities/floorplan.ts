@@ -162,7 +162,7 @@ export class Floorplan {
             accessPoints.push(node);
         });
 
-        console.log("Access points are : ", accessPoints);
+        // console.log("Access points are : ", accessPoints);
 
         return accessPoints;
     }

@@ -15,6 +15,11 @@ export class TelegramService {
 
     public static bot = new TelegramBot(keys.telegram, { polling: true });
 
+    private static users: { [chat_id: number]: string } = {
+        7017630724: 'e4:d3:7a:49:bb:4a',
+        1161057898: 'e6:8a:39:51:87:f1',
+    };
+    
     public static telegramBot(wss: WebSocketServer) {
         console.log(wss.clients);
 
@@ -65,7 +70,7 @@ export class TelegramService {
                         if (res.data.Detected === 'Gun Shot') {
                             TelegramService.bot.sendMessage(msg.chat.id, 'Gunshot detected! Please report the emergency.');
                             wss.clients.forEach((client) => {
-                                client.send("alertMessage");
+                                client.send(`Alert for ${this.users[msg.chat.id]}`);
                             });
                         } else {
                             TelegramService.bot.sendMessage(msg.chat.id, `No emergency detected, We recognized ${res.data.Detected}`);
@@ -90,7 +95,7 @@ export class TelegramService {
                     TelegramService.bot.sendMessage(chatId, 'Thank you for reporting the emergency. Please await further instructions.');
                     userState = 'waitingForReport';
                     wss.clients.forEach((client) => {
-                        client.send("alertMessage");
+                        client.send(`Alert for ${this.users[chatId]}`);
                     });
                 }
             }
