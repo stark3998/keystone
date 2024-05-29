@@ -129,8 +129,9 @@ export class Floorplan {
      * @returns A 2D array representing the floor plan.
      */
     public transformMaze(plan: PlanRow, targetX: number, targetY: number): number[][] {
-        let rows: number = plan.height;
-        let cols: number = plan.width;
+        // console.log(plan.width, plan.height)
+        let rows: number = plan.width;
+        let cols: number = plan.height;
         var maze: number[][] = new Array(rows);
 
         for (let i = 0; i < rows; i++) {
