@@ -23,8 +23,8 @@ export class UserSimulator {
             // console.log(floorPlan.plans.length);
             console.log("Floor Plan Count: ", floorPlans.plans.length);
             floorPlans.plans.forEach((floorPlan: any) => {
-                for (let x = 0; x < floorPlan.width - 1; x++) {
-                    for (let y = 0; y < floorPlan.height - 1; y++) {
+                for (let x = 1; x < floorPlan.width - 1; x++) {
+                    for (let y = 1; y < floorPlan.height - 1; y++) {
                         var location = { x, y };
                         if (!this.isLocationBlocked(location, floorPlan)) {
                             if (this.allowedLocations[floorPlan.id] == undefined) {
