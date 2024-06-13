@@ -9,9 +9,9 @@ Keystone is a project designed to provide Emergency Response Assistance (ERA) by
 The repository is organized into the following main components:
 
 - **AP Logs**: Contains logs related to Access Points used in the project.
-- **Documentation**: Detailed documentation for each component of the project.
-- **EscapeRouteSimulator**: A simulator to model escape routes in emergency situations.
-- **Gunshot API**: An API responsible for detecting gunshots using audio processing.
+- **Documentation**: Additional documentation for the project.
+- **EscapeRouteSimulator**: An animation showcasing the escape route algorithm.
+- **Gunshot API**: An API exposed for the **Gunshot Detection** module.
 - **Gunshot Detection**: Implements the algorithms and models used for gunshot detection.
 - **MainServer**: The central server that integrates and manages all components of the ERA system.
 - **Network Log Simulator**: Simulates network logs to analyze and detect unusual activity.
@@ -26,6 +26,7 @@ Ensure you have the following installed on your system:
 
 - Python 3.x
 - `portaudio` (for the Gunshot API)
+- node 20.x
 
 ### Installation
 
@@ -44,21 +45,6 @@ Ensure you have the following installed on your system:
     python3 main.py
     ```
 
-### EscapeRouteSimulator
-
-1. Navigate to the EscapeRouteSimulator directory:
-    ```sh
-    cd EscapeRouteSimulator
-    ```
-2. Install the required dependencies:
-    ```sh
-    pip install -r requirements.txt
-    ```
-3. Run the simulator:
-    ```sh
-    python simulator.py
-    ```
-
 ### MainServer
 
 1. Navigate to the MainServer directory:
@@ -67,11 +53,15 @@ Ensure you have the following installed on your system:
     ```
 2. Install the required dependencies:
     ```sh
-    pip install -r requirements.txt
+    npm install
     ```
-3. Start the server:
+3. Compile Typescript:
     ```sh
-    python server.py
+    npx tsc
+    ```
+4. Start the server:
+    ```sh
+    npm start
     ```
 
 ### Network Log Simulator
@@ -82,132 +72,17 @@ Ensure you have the following installed on your system:
     ```
 2. Install the required dependencies:
     ```sh
-    pip install -r requirements.txt
+    npm install
     ```
-3. Run the simulator:
+3. Compile Typescript:
     ```sh
-    python network_log_simulator.py
+    npx tsc
     ```
-
-### Wifi Analysis
-
-1. Navigate to the Wifi Analysis directory:
+4. Start the server:
     ```sh
-    cd Wifi\ Analysis
-    ```
-2. Install the required dependencies:
-    ```sh
-    pip install -r requirements.txt
-    ```
-3. Run the analysis script:
-    ```sh
-    python wifi_analysis.py
+    npm start
     ```
 
 ## Running the Project
 
 To run the entire project, follow the setup instructions for each component. Ensure all dependencies are installed and the environment is correctly configured. Start each component as described in the installation steps.
-
-## Contributing
-
-Contributions are welcome! Please fork the repository and submit pull requests for review. Make sure your code adheres to the project's coding standards and is well-documented.
-
-## License
-
-This project is licensed under the MIT License. See the `LICENSE` file for details.
-
-## Contact
-
-For more information, contact the repository owner [stark3998](https://github.com/stark3998).
-
----
-
-# README.md
-
-```markdown
-# Keystone: Emergency Response Assistance (ERA)
-
-## Overview
-
-Keystone is a comprehensive system designed to assist in emergency response scenarios. It includes modules for gunshot detection, escape route simulation, network log analysis, and WiFi signal evaluation, all integrated into a central server with a user-friendly front-end interface.
-
-## Repository Structure
-
-- **AP Logs**: Access Point logs.
-- **Documentation**: Detailed component documentation.
-- **EscapeRouteSimulator**: Models escape routes.
-- **Gunshot API**: Detects gunshots via audio.
-- **Gunshot Detection**: Implements detection algorithms.
-- **MainServer**: Central server management.
-- **Network Log Simulator**: Analyzes simulated network logs.
-- **Wifi Analysis**: Evaluates WiFi data for emergency response.
-- **era-frontend**: Front-end interface.
-
-## Getting Started
-
-### Prerequisites
-
-- Python 3.x
-- `portaudio`
-
-### Installation
-
-#### Gunshot API
-
-```sh
-brew install portaudio
-cd Gunshot\ API
-python3 -m venv env
-source env/bin/activate
-pip install -r requirements.txt
-python3 main.py
-```
-
-#### EscapeRouteSimulator
-
-```sh
-cd EscapeRouteSimulator
-pip install -r requirements.txt
-python simulator.py
-```
-
-#### MainServer
-
-```sh
-cd MainServer
-pip install -r requirements.txt
-python server.py
-```
-
-#### Network Log Simulator
-
-```sh
-cd Network\ Log\ Simulator
-pip install -r requirements.txt
-python network_log_simulator.py
-```
-
-#### Wifi Analysis
-
-```sh
-cd Wifi\ Analysis
-pip install -r requirements.txt
-python wifi_analysis.py
-```
-
-## Running the Project
-
-Set up and start each component as described. Ensure all dependencies are installed.
-
-## Contributing
-
-Fork the repository and submit pull requests. Ensure your code is documented and adheres to project standards.
-
-## License
-
-MIT License. See the `LICENSE` file.
-
-## Contact
-
-For more information, contact [stark3998](https://github.com/stark3998).
-```
