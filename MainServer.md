@@ -1,4 +1,4 @@
-# Documentation and API Docs
+# ERA Backend Documentation
 
 ## Server Class
 
