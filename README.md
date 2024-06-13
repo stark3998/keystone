@@ -8,15 +8,15 @@ Keystone is a project designed to provide Emergency Response Assistance (ERA) by
 
 The repository is organized into the following main components:
 
-- **AP Logs**: Contains logs related to Access Points used in the project.
+- **AP Logs**: Legacy network log simulator and their logs.
 - **Documentation**: Additional documentation for the project.
 - **EscapeRouteSimulator**: An animation showcasing the escape route algorithm.
 - **Gunshot API**: An API exposed for the **Gunshot Detection** module.
 - **Gunshot Detection**: Implements the algorithms and models used for gunshot detection.
-- **MainServer**: The central server that integrates and manages all components of the ERA system.
+- **MainServer**: The central server that integrates and manages all components of the ERA system. - [MainServer.md](https://github.com/stark3998/keystone/blob/a4c8419dbcf2eb153349adc3fd686283a2d23117/MainServer.md)
 - **Network Log Simulator**: Simulates network logs to analyze and detect unusual activity.
-- **Wifi Analysis**: Analyzes WiFi signals and data to assist in emergency detection and response.
-- **era-frontend**: The front-end interface for the ERA system.
+- **Wifi Analysis**: Legacy algorithms for analyzing Wi-Fi singals and their data.
+- **era-frontend**: The front-end interface for the ERA system. - [Frontend.md](https://github.com/stark3998/keystone/blob/71b9335498f40e223646c29d49ef4a7fe3c97b75/Frontend.md)
 
 ## Getting Started
 
@@ -26,7 +26,7 @@ Ensure you have the following installed on your system:
 
 - Python 3.x
 - `portaudio` (for the Gunshot API)
-- node 20.x
+- node and npm lts
 
 ### Installation
 
@@ -82,6 +82,22 @@ Ensure you have the following installed on your system:
     ```sh
     npm start
     ```
+
+### ERA Frontend
+
+1. Navigate to the ERA Frontend:
+    ```sh
+    cd era-frontend
+    ```
+2. Install the required dependencies:
+    ```sh
+    npm install
+    ```
+3. Start the server:
+    ```sh
+    npm run dev
+    ```
+4. Navigate to the specified URL
 
 ## Running the Project
 
